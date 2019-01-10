@@ -1,0 +1,12 @@
+use_frameworks!
+
+target 'Reduxift_Example' do
+  pod 'Reduxift', :path => '../'
+
+  target 'Reduxift_Tests' do
+    inherit! :search_paths
+
+    pod 'Quick'
+    pod 'Nimble'
+  end
+end
