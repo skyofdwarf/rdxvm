@@ -29,19 +29,13 @@ public extension DynamicMemberLookupDictionary where Key == String {
         return self[member]
     }
     
-//    public subscript<T>(dynamicMember member: Key) -> T? {
-//        return self[member] as? T
-//    }
-
-//    public subscript<T>(dynamicMember member: Key) -> [T]? {
-//        return self[member] as? [T]
-//    }
-    
-    public subscript(dynamicMember member: Key) -> ReduxiftStore.State? {
-        return self[member] as? ReduxiftStore.State
+    public subscript(dynamicMember member: Key) -> [Key: Value]? {
+        return self[member] as? [Key: Value]
     }
 
 }
 
 extension Dictionary: DynamicMemberLookupDictionary where Key == String {}
+
+extension Dictionary: ReduxiftState where Key == String {}
 

@@ -75,7 +75,7 @@ extension BreedListAction {
 class BreedListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
-    lazy var store: ReduxiftStore = createStore()
+    lazy var store: ReduxiftDictionaryStore = createStore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,7 +106,7 @@ class BreedListViewController: UIViewController {
 }
 
 extension BreedListViewController {
-    func createStore() -> ReduxiftStore {
+    func createStore() -> ReduxiftDictionaryStore {
         let breedsReducer = BreedListAction.reduce([]) { (state, action, defaults) in
             if case let .reload(items) = action {
                 return items
@@ -125,7 +125,7 @@ extension BreedListViewController {
             }
         }
         
-        let reducer: ReduxiftStore.Reducer = { (state, action) in
+        let reducer: ReduxiftDictionaryStore.Reducer = { (state, action) in
             return [ "description": "Reduxift Example App",
                      "data": [ "dogs": [ "breeds": breedsReducer(state.data?.dogs?.breeds, action),
                                          "shout": "bow" ],
@@ -133,11 +133,11 @@ extension BreedListViewController {
                      "alert": alertReducer(state.alert, action)
             ]
         }
-        return ReduxiftStore(state: [:],
-                             reducer: reducer,
-                             middlewares:[ MainQueueMiddleware(),
-                                           FunctionMiddleware({ print("log: \($1)") }),
-                                           AsyncActionMiddleware() ])
+        return ReduxiftDictionaryStore(state: [:],
+                                       reducer: reducer,
+                                       middlewares:[ MainQueueMiddleware(),
+                                                     FunctionMiddleware({ print("log: \($1)") }),
+                                                     AsyncActionMiddleware() ])
     }
     
     func alert(_ msg: String) {
@@ -149,29 +149,18 @@ extension BreedListViewController {
 }
 
 extension BreedListViewController: ReduxiftStoreSubscriber {
-    func store(didChangeState state: ReduxiftStore.State, action: ReduxiftAction) {
+    func store(didChangeState state: ReduxiftState, action: ReduxiftAction) {
+        
+        guard let state = state as? ReduxiftDictionaryState else {
+            return
+        }
         
         // update app by state
         if let alert = state.alert as Any? as? String, !alert.isEmpty {
             self.alert(alert)
         }
-        
+
         self.tableView.reloadData()
-        
-        /*
-        // update app by action
-        if let action = action as? BreedListAction {
-            if case let .alert(msg) = action  {
-                print("alert: \(msg)")
-                
-                self.alert(msg)
-                
-            }
-            else if case .reload = action {
-                self.tableView.reloadData()
-            }
-         }
-         */
     }
 }
 

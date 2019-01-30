@@ -9,6 +9,11 @@
 import UIKit
 import Reduxift
 
+struct RandomDogState: ReduxiftState {
+    var imageUrl: String = ""
+    var alert: String = ""
+}
+
 enum RandomDogAction: ReduxiftAction {
     case fetch(breed: String?)
     case reload(url: String)
@@ -74,8 +79,7 @@ extension RandomDogAction {
 
 class RandomDogViewController: UIViewController {
     @IBOutlet weak var dogImageView: UIImageView!
-    
-    lazy var store: ReduxiftStore = createStore()
+    lazy var store: ReduxiftStore<RandomDogState> = createStore()
     var canceller: ReduxiftAction.AsyncCanceller?
     
     var breed: String?
@@ -86,7 +90,7 @@ class RandomDogViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(RandomDogViewController.cancelButtonDidClick))
-        let reloadButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(RandomDogViewController.reloadButtonDidClick))
+        let reloadButton = UIBarButtonItem(title: "Reload", style: .plain, target: self, action: #selector(RandomDogViewController.reloadButtonDidClick))
         
         self.navigationItem.rightBarButtonItems = [ reloadButton, cancelButton ]
         
@@ -124,36 +128,28 @@ class RandomDogViewController: UIViewController {
 }
 
 extension RandomDogViewController {
-    func createStore() -> ReduxiftStore {
-        let imageReducer = RandomDogAction.reduce("") { (state, action, defaults) in
-            if case let .reload(url) = action {
-                return url
+    func createStore() -> ReduxiftStore<RandomDogState> {
+        let reducer: ReduxiftStore<RandomDogState>.Reducer = { (state, action) in
+            var state = state
+            guard let action = action as? RandomDogAction else {
+                return state
             }
-            else {
-                return state ?? defaults
+            
+            switch action {
+            case let .reload(url):
+                state.imageUrl = url
+            case let .alert(msg):
+                state.alert = msg
+            default:
+                return state
             }
+            return state
         }
-        
-        let alertReducer = BreedListAction.reduce("") { (state, action, defaults) in
-            if case let .alert(msg) = action {
-                return msg
-            }
-            else {
-                return state ?? defaults
-            }
-        }
-        
-        let reducer: ReduxiftStore.Reducer = { (state, action) in
-            return [ "description": "Reduxift Example App",
-                     "imageUrl": imageReducer(state.data?.dogs?.breeds, action),
-                     "alert": alertReducer(state.alert, action)
-            ]
-        }
-        return ReduxiftStore(state: [:],
-                             reducer: reducer,
-                             middlewares:[ MainQueueMiddleware(),
-                                           FunctionMiddleware({ print("log: \($1)") }),
-                                           AsyncActionMiddleware() ])
+        return ReduxiftStore<RandomDogState>(state: RandomDogState(),
+                                             reducer: reducer,
+                                             middlewares:[ MainQueueMiddleware(),
+                                                           FunctionMiddleware({ print("log: \($1)") }),
+                                                           AsyncActionMiddleware() ])
     }
     
     func alert(_ msg: String) {
@@ -165,13 +161,16 @@ extension RandomDogViewController {
 }
 
 extension RandomDogViewController: ReduxiftStoreSubscriber {
-    func store(didChangeState state: ReduxiftStore.State, action: ReduxiftAction) {
+    func store(didChangeState state: ReduxiftState, action: ReduxiftAction) {
+        guard let state = state as? RandomDogState else {
+            return
+        }
         
         if let alert = state.alert as Any? as? String, !alert.isEmpty {
             self.alert(alert)
         }
         
-        if let imageUrl = self.store.state.imageUrl as Any? as? String, !imageUrl.isEmpty {
+        if let imageUrl = state.imageUrl as? String, !imageUrl.isEmpty {
             // NOTE: Data(contentsOf:) blocks main thread while downloading.
             if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url) {
                 self.dogImageView.image = UIImage(data: data)

@@ -9,22 +9,30 @@
 import Foundation
 
 
-
 /// store subscriber delegate
 public protocol ReduxiftStoreSubscriber: class {
-    func store(didChangeState state: ReduxiftStore.State, action: ReduxiftAction)
+    func store(didChangeState state: ReduxiftState, action: ReduxiftAction)
 }
 
+/// state protocol
+public protocol ReduxiftState {
+    init()
+}
 
+/// typealiases for dictionary state
+public typealias ReduxiftDictionaryState = [String: Any]
+public typealias ReduxiftDictionaryStore = ReduxiftStore<ReduxiftDictionaryState>
 
+    
 /// ReduxiftStore
-public class ReduxiftStore {
-    public typealias State = Dictionary<String, Any>
+public class ReduxiftStore<StateType: ReduxiftState> {
+    public typealias State = StateType
     public typealias Reducer = (_ state: State, _ action: ReduxiftAction) -> State
     public typealias GetState = () -> State
     
     
-    public private(set) var state: State = [:]
+    public private(set) var state: State = State()
+    
     
     private var subscribers = NSHashTable<AnyObject>.weakObjects()
     private var reducer: Reducer
@@ -32,7 +40,7 @@ public class ReduxiftStore {
     
     private var dispatching: Bool = false
     
-    public init(state: State, reducer: @escaping Reducer, middlewares: [ReduxiftMiddleware]) {
+    public init(state: State, reducer: @escaping Reducer, middlewares: [ReduxiftMiddleware<State>]) {
         self.reducer = reducer
         self.dispatcher = self.buildDispatcher(middlewares: middlewares)
     }
@@ -41,7 +49,7 @@ public class ReduxiftStore {
         self.init(state: state, reducer: reducer, middlewares: [])
     }
     
-    private func buildDispatcher(middlewares: [ReduxiftMiddleware]) -> ReduxiftDispatcher {
+    private func buildDispatcher(middlewares: [ReduxiftMiddleware<State>]) -> ReduxiftDispatcher {
         let dispatcher: ReduxiftDispatcher = { [unowned self] (action) in
             guard !self.dispatching else {
                 fatalError("a store can't dispatch a action while processing other action already dispatched: \(action)")
