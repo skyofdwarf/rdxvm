@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Reduxift'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of Reduxift.'
+  s.summary          = 'Redux implementation for Swift.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+Reduxift is another Redux implementation of Swift.
                        DESC
 
   s.homepage         = 'https://github.com/skyofdwarf/Reduxift'
@@ -29,6 +29,7 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
+  s.swift_version = '4.2'
 
   s.source_files = 'Reduxift/Classes/**/*'
   
