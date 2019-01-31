@@ -9,13 +9,34 @@
 import Foundation
 
 
-/// store subscriber delegate
-public protocol ReduxiftStoreSubscriber: class {
-    func store(didChangeState state: ReduxiftState, action: ReduxiftAction)
+/// woraround protocol to workaround compile error of using a protocol with associated type
+///
+/// - Note: public but dont use in your app
+///
+/// workaround below compile error
+/// `Protocol 'protocol-name' can only be used as a generic constraint because it has Self or associated type requirements.`
+///
+public protocol ReduxiftStoreBaseSubscriber {
+    func callDelegate(state: ReduxiftState, action: ReduxiftAction)
 }
+
+public extension ReduxiftStoreSubscriber {
+    /// call real delegate function of subscriber
+    func callDelegate(state: ReduxiftState, action: ReduxiftAction) {
+        self.store(didChangeState: state as! State, action: action)
+    }
+}
+
+/// store subscriber delegate
+public protocol ReduxiftStoreSubscriber: class, ReduxiftStoreBaseSubscriber {
+    associatedtype State: ReduxiftState
+    func store(didChangeState state: State, action: ReduxiftAction)
+}
+
 
 /// state protocol
 public protocol ReduxiftState {
+    /// default initialization
     init()
 }
 
@@ -77,18 +98,18 @@ public class ReduxiftStore<StateType: ReduxiftState> {
         return self.dispatcher(action)
     }
     
-    public func subscribe(_ subscriber: ReduxiftStoreSubscriber) {
+    public func subscribe<T: ReduxiftStoreSubscriber>(_ subscriber: T) {
         self.subscribers.add(subscriber)
     }
     
-    public func unsubscribe(_ subscriber: ReduxiftStoreSubscriber) {
+    public func unsubscribe<T: ReduxiftStoreSubscriber>(_ subscriber: T) {
         self.subscribers.remove(subscriber)
     }
     
     private func publish(_ state: State, _ action: ReduxiftAction) {
         self.subscribers.allObjects.forEach { (obj) in
-            if let subscriber = obj as? ReduxiftStoreSubscriber {
-                subscriber.store(didChangeState: state, action: action)
+            if let subscriber = obj as? ReduxiftStoreBaseSubscriber {
+                subscriber.callDelegate(state: state, action: action)
             }
         }
     }
@@ -96,5 +117,6 @@ public class ReduxiftStore<StateType: ReduxiftState> {
     public static func reducer(_ reducer: @escaping Reducer) -> Reducer {
         return reducer
     }
+    
 }
 

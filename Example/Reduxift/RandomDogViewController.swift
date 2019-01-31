@@ -161,18 +161,16 @@ extension RandomDogViewController {
 }
 
 extension RandomDogViewController: ReduxiftStoreSubscriber {
-    func store(didChangeState state: ReduxiftState, action: ReduxiftAction) {
-        guard let state = state as? RandomDogState else {
-            return
+    typealias State = RandomDogState
+    
+    func store(didChangeState state: RandomDogState, action: ReduxiftAction) {
+        if !state.alert.isEmpty {
+            self.alert(state.alert)
         }
         
-        if let alert = state.alert as Any? as? String, !alert.isEmpty {
-            self.alert(alert)
-        }
-        
-        if let imageUrl = state.imageUrl as? String, !imageUrl.isEmpty {
+        if !state.imageUrl.isEmpty {
             // NOTE: Data(contentsOf:) blocks main thread while downloading.
-            if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url) {
+            if let url = URL(string: state.imageUrl), let data = try? Data(contentsOf: url) {
                 self.dogImageView.image = UIImage(data: data)
             }
         }

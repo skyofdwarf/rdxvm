@@ -149,12 +149,9 @@ extension BreedListViewController {
 }
 
 extension BreedListViewController: ReduxiftStoreSubscriber {
-    func store(didChangeState state: ReduxiftState, action: ReduxiftAction) {
-        
-        guard let state = state as? ReduxiftDictionaryState else {
-            return
-        }
-        
+    typealias State = ReduxiftDictionaryState
+    func store(didChangeState state: ReduxiftDictionaryState, action: ReduxiftAction) {
+
         // update app by state
         if let alert = state.alert as Any? as? String, !alert.isEmpty {
             self.alert(alert)
