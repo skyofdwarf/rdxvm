@@ -1,5 +1,5 @@
 //
-//  ReduxiftTypes.swift
+//  Types.swift
 //  SwiftTest
 //
 //  Created by skyofdwarf on 2019. 1. 26..
@@ -11,7 +11,7 @@ import Foundation
 
 
 /// common dispatcher type
-public typealias ReduxiftDispatcher = (_ action: ReduxiftAction) -> Any
+public typealias Dispatcher = (_ action: Action) -> Any
 
 
 /// protocol to use dynamic member lookup on Dictionary
@@ -37,5 +37,5 @@ public extension DynamicMemberLookupDictionary where Key == String {
 
 extension Dictionary: DynamicMemberLookupDictionary where Key == String {}
 
-extension Dictionary: ReduxiftState where Key == String {}
+extension Dictionary: State where Key == String {}
 

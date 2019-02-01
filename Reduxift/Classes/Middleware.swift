@@ -1,5 +1,5 @@
 //
-//  ReduxiftMiddleware.swift
+//  Middleware.swift
 //  RduxiftUI
 //
 //  Created by skyofdwarf on 2019. 1. 27..
@@ -10,18 +10,18 @@ import Foundation
 
 
 /// dispatch transducer
-public typealias ReduxiftDispatchTransducer = (_ next: @escaping ReduxiftDispatcher) -> ReduxiftDispatcher
+public typealias DispatchTransducer = (_ next: @escaping Dispatcher) -> Dispatcher
 
 /// type of middleware closure
-public typealias ReduxiftMiddleware<State: ReduxiftState> = (_ state: @escaping ReduxiftStore<State>.GetState, _ dispatch: @escaping ReduxiftDispatcher) -> ReduxiftDispatchTransducer
+public typealias Middleware<S: State> = (_ state: @escaping Store<S>.GetState, _ dispatch: @escaping Dispatcher) -> DispatchTransducer
 
 
 /// helper flatted type of middleware process
-public typealias MiddlewareProcess<State: ReduxiftState> = (
-    _ state: @escaping ReduxiftStore<State>.GetState,
-    _ dispatch: @escaping ReduxiftDispatcher,
-    _ next: @escaping ReduxiftDispatcher,
-    _ action: ReduxiftAction) -> Any
+public typealias MiddlewareProcess<S: State> = (
+    _ state: @escaping Store<S>.GetState,
+    _ dispatch: @escaping Dispatcher,
+    _ next: @escaping Dispatcher,
+    _ action: Action) -> Any
 
 
 
@@ -29,7 +29,7 @@ public typealias MiddlewareProcess<State: ReduxiftState> = (
 ///
 /// - Parameter process: closure of middleware process
 /// - Returns: middleware closure
-public func CreateMiddleware<State: ReduxiftState>(_ process: @escaping MiddlewareProcess<State>) -> ReduxiftMiddleware<State> {
+public func CreateMiddleware<S: State>(_ process: @escaping MiddlewareProcess<S>) -> Middleware<S> {
     return { (state, dispatch) in
         return { (next) in
             return { (action) in
@@ -40,13 +40,13 @@ public func CreateMiddleware<State: ReduxiftState>(_ process: @escaping Middlewa
 }
 
 
-public typealias FunctionMiddlewareFunction<State: ReduxiftState> = (_ state: ReduxiftStore<State>.GetState, _ action: ReduxiftAction) -> Void
+public typealias FunctionMiddlewareFunction<State: State> = (_ state: Store<State>.GetState, _ action: Action) -> Void
 
 /// function middleware, calls a function before next middleware runs
 ///
 /// - Parameter function: normal function to call
 /// - Returns: function middleware closure
-public func FunctionMiddleware<State: ReduxiftState>(_ function: @escaping FunctionMiddlewareFunction<State>) -> ReduxiftMiddleware<State> {
+public func FunctionMiddleware<S: State>(_ function: @escaping FunctionMiddlewareFunction<S>) -> Middleware<S> {
     return CreateMiddleware { (state, dispatch, next, action) in
         function(state, action)
         return next(action)
@@ -57,9 +57,9 @@ public func FunctionMiddleware<State: ReduxiftState>(_ function: @escaping Funct
 /// middleware for async action
 ///
 /// - Returns: async middleware closure
-public func AsyncActionMiddleware<State: ReduxiftState>() -> ReduxiftMiddleware<State> {
+public func AsyncActionMiddleware<S: State>() -> Middleware<S> {
     return CreateMiddleware { (state, dispatch, next, action) in
-        if let async = action.payload as? ReduxiftAction.Async {
+        if let async = action.payload as? Action.Async {
             // do not call `next(action)`
             return async(dispatch) as Any
         }
@@ -73,7 +73,7 @@ public func AsyncActionMiddleware<State: ReduxiftState>() -> ReduxiftMiddleware<
 /// middleware to dispatch a action on main thread
 ///
 /// - Returns: main queue middleware closure
-public func MainQueueMiddleware<State: ReduxiftState>() -> ReduxiftMiddleware<State> {
+public func MainQueueMiddleware<S: State>() -> Middleware<S> {
     return CreateMiddleware { (state, dispatch, next, action) in
         if Thread.isMainThread {
             return next(action)

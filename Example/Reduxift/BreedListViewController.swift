@@ -9,7 +9,7 @@
 import UIKit
 import Reduxift
 
-enum BreedListAction: ReduxiftAction {
+enum BreedListAction: Action {
     case fetch(breed: String?)
     case reload([String])
     case alert(String)
@@ -37,10 +37,6 @@ extension BreedListAction {
                         let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any] else {
                             _ = dispatch(.alert("failed to parse json from response"))
                             return
-                    }
-                    
-                    if let status = json.status as Any? as? String {
-                        print("status: \(status)")
                     }
                     
                     if let breeds = json.message as Any? as? [String: Any] {
@@ -75,18 +71,26 @@ extension BreedListAction {
 class BreedListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
-    lazy var store: ReduxiftDictionaryStore = createStore()
+    lazy var store: DictionaryStore = createStore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         
-        let reloadButton = UIBarButtonItem(title: "Reload", style: .plain, target: self, action: #selector(BreedListViewController.reloadButtonDidClick))
-        
-        self.navigationItem.rightBarButtonItem = reloadButton
+        let fetchButton = UIBarButtonItem(title: "Fetch",
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(BreedListViewController.fetchButtonDidClick))
+
+        self.navigationItem.rightBarButtonItem = fetchButton
         
         self.store.subscribe(self)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
     }
     
 
@@ -100,58 +104,62 @@ class BreedListViewController: UIViewController {
     }
     */
     
-    @objc func reloadButtonDidClick(_ sender: Any) {
+    @objc func fetchButtonDidClick(_ sender: Any) {
         self.store.dispatch(BreedListAction.fetch(breed: nil))
     }
 }
 
 extension BreedListViewController {
-    func createStore() -> ReduxiftDictionaryStore {
-        let breedsReducer = BreedListAction.reduce([]) { (state, action, defaults) in
+    func createStore() -> DictionaryStore {
+        let breedsReducer = BreedListAction.reduce([]) { (state, action) in
             if case let .reload(items) = action {
                 return items
             }
             else {
-                return state ?? defaults
+                return state
             }
         }
         
-        let alertReducer = BreedListAction.reduce("") { (state, action, defaults) in
+        let alertReducer = BreedListAction.reduce("") { (state, action) in
             if case let .alert(msg) = action {
                 return msg
             }
             else {
-                return state ?? defaults
+                return state
             }
         }
         
-        let reducer: ReduxiftDictionaryStore.Reducer = { (state, action) in
+        let reducer = DictionaryStore.reduce { (state, action) in
             return [ "description": "Reduxift Example App",
                      "data": [ "dogs": [ "breeds": breedsReducer(state.data?.dogs?.breeds, action),
                                          "shout": "bow" ],
                                "cats": "NA" ],
-                     "alert": alertReducer(state.alert, action)
+                     "alert": alertReducer(state.alert, action),
             ]
         }
-        return ReduxiftDictionaryStore(state: [:],
-                                       reducer: reducer,
-                                       middlewares:[ MainQueueMiddleware(),
-                                                     FunctionMiddleware({ print("log: \($1)") }),
-                                                     AsyncActionMiddleware() ])
+        
+        return DictionaryStore(state: [:],
+                               reducer: reducer,
+                               middlewares:[ MainQueueMiddleware(),
+                                             FunctionMiddleware({ print("log: \($1)") }),
+                                             AsyncActionMiddleware() ])
     }
     
     func alert(_ msg: String) {
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default) { [unowned self] (actin) in
+            self.store.dispatch(BreedListAction.alert(""))
+        })
         
         self.present(alert, animated: true, completion: nil)
     }
 }
 
-extension BreedListViewController: ReduxiftStoreSubscriber {
-    typealias State = ReduxiftDictionaryState
-    func store(didChangeState state: ReduxiftDictionaryState, action: ReduxiftAction) {
-
+extension BreedListViewController: StoreSubscriber {
+    typealias State = DictionaryState
+    func store(didChangeState state: DictionaryState, action: Action) {
+        print("new state: \(state)")
+        
         // update app by state
         if let alert = state.alert as Any? as? String, !alert.isEmpty {
             self.alert(alert)

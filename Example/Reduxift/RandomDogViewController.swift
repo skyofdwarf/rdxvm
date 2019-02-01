@@ -9,12 +9,12 @@
 import UIKit
 import Reduxift
 
-struct RandomDogState: ReduxiftState {
+struct RandomDogState: State {
     var imageUrl: String = ""
     var alert: String = ""
 }
 
-enum RandomDogAction: ReduxiftAction {
+enum RandomDogAction: Action {
     case fetch(breed: String?)
     case reload(url: String)
     case alert(String)
@@ -79,8 +79,8 @@ extension RandomDogAction {
 
 class RandomDogViewController: UIViewController {
     @IBOutlet weak var dogImageView: UIImageView!
-    lazy var store: ReduxiftStore<RandomDogState> = createStore()
-    var canceller: ReduxiftAction.AsyncCanceller?
+    lazy var store: Store<RandomDogState> = createStore()
+    var canceller: Action.AsyncCanceller?
     
     var breed: String?
     
@@ -89,10 +89,16 @@ class RandomDogViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         
-        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(RandomDogViewController.cancelButtonDidClick))
-        let reloadButton = UIBarButtonItem(title: "Reload", style: .plain, target: self, action: #selector(RandomDogViewController.reloadButtonDidClick))
+        let cancelButton = UIBarButtonItem(title: "Cancel",
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(RandomDogViewController.cancelButtonDidClick))
+        let fetchButton = UIBarButtonItem(title: "Fetch",
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(RandomDogViewController.fetchButtonDidClick))
         
-        self.navigationItem.rightBarButtonItems = [ reloadButton, cancelButton ]
+        self.navigationItem.rightBarButtonItems = [ fetchButton, cancelButton ]
         
         self.store.subscribe(self)
     }
@@ -116,24 +122,26 @@ class RandomDogViewController: UIViewController {
     
     @objc func cancelButtonDidClick(_ sender: Any?) {
         self.canceller?()
+        self.canceller = nil
     }
     
-    @objc func reloadButtonDidClick(_ sender: Any?) {
+    @objc func fetchButtonDidClick(_ sender: Any?) {
         self.reload()
     }
     
     func reload() {
-        self.canceller = self.store.dispatch(RandomDogAction.fetch(breed: self.breed)) as? ReduxiftAction.AsyncCanceller
+        self.canceller = self.store.dispatch(RandomDogAction.fetch(breed: self.breed)) as? Action.AsyncCanceller
     }
 }
 
 extension RandomDogViewController {
-    func createStore() -> ReduxiftStore<RandomDogState> {
-        let reducer: ReduxiftStore<RandomDogState>.Reducer = { (state, action) in
-            var state = state
+    func createStore() -> Store<RandomDogState> {
+        let reducer = RandomDogState.reduce { (state, action) in
             guard let action = action as? RandomDogAction else {
                 return state
             }
+            
+            var state = state
             
             switch action {
             case let .reload(url):
@@ -145,25 +153,29 @@ extension RandomDogViewController {
             }
             return state
         }
-        return ReduxiftStore<RandomDogState>(state: RandomDogState(),
-                                             reducer: reducer,
-                                             middlewares:[ MainQueueMiddleware(),
-                                                           FunctionMiddleware({ print("log: \($1)") }),
-                                                           AsyncActionMiddleware() ])
+        
+        
+        return Store<RandomDogState>(state: RandomDogState(),
+                                     reducer: reducer,
+                                     middlewares:[ MainQueueMiddleware(),
+                                                   FunctionMiddleware({ print("log: \($1)") }),
+                                                   AsyncActionMiddleware() ])
     }
     
     func alert(_ msg: String) {
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default) { [unowned self] (actin) in
+            self.store.dispatch(RandomDogAction.alert(""))
+        })
         
         self.present(alert, animated: true, completion: nil)
     }
 }
 
-extension RandomDogViewController: ReduxiftStoreSubscriber {
+extension RandomDogViewController: StoreSubscriber {
     typealias State = RandomDogState
     
-    func store(didChangeState state: RandomDogState, action: ReduxiftAction) {
+    func store(didChangeState state: RandomDogState, action: Action) {
         if !state.alert.isEmpty {
             self.alert(state.alert)
         }
