@@ -1,5 +1,5 @@
 PODS:
-  - Nimble (8.0.2)
+  - Nimble (8.0.1)
   - Quick (2.1.0)
   - Reduxift (0.1.0)
 
@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Nimble: 622629381bda1dd5678162f21f1368cec7cbba60
+  Nimble: 45f786ae66faa9a709624227fae502db55a8bdd0
   Quick: 4be43f6634acfa727dd106bdf3929ce125ffa79d
   Reduxift: fd25ef55eb300e526e487fbeae5d0b972c98e66a
 
