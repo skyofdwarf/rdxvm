@@ -16,10 +16,10 @@ public protocol Action {
 
 public extension Action {
     /// canceller of async action
-    public typealias AsyncCanceller = () -> Void
+    typealias AsyncCanceller = () -> Void
     
     /// payload of async action
-    public typealias Async = (@escaping Dispatcher) -> AsyncCanceller?
+    typealias Async = (@escaping Dispatcher) -> AsyncCanceller?
     
     
     typealias ActionReducer<State, A: Action> = (_ state: State, _ action: A) -> State
@@ -38,11 +38,11 @@ public extension Action {
     ///
     /// - Parameter action: action closure specified type of current concrete action
     /// - Returns: action closure type removed
-    public func async(_ action: @escaping GenericAsync<Self>) -> Async {
+    func async(_ action: @escaping GenericAsync<Self>) -> Async {
         return Self.async(action)
     }
     
-    public static func async(_ action: @escaping GenericAsync<Self>) -> Async {
+    static func async(_ action: @escaping GenericAsync<Self>) -> Async {
         return action
     }
 
@@ -53,7 +53,7 @@ public extension Action {
     ///   - defaults: default value of state
     ///   - reducer: closure to reduce state with action
     /// - Returns: state reducer
-    public static func reduce<State>(_ defaults: State, _ reducer: @escaping ActionReducer<State, Self>) -> AnyReducer<State> {
+    static func reduce<State>(_ defaults: State, _ reducer: @escaping ActionReducer<State, Self>) -> AnyReducer<State> {
         return { (state, action) in
             if action is Self {
                 return reducer((state ?? defaults) as! State, action as! Self)
@@ -83,7 +83,7 @@ public struct NamedAction: ActionNaming {
 }
 
 public extension NamedAction {
-    public static func reduce<State>(name: String, _ defaults: State, _ reducer: @escaping PayloadReducer<State>) -> AnyReducer<State> {
+    static func reduce<State>(name: String, _ defaults: State, _ reducer: @escaping PayloadReducer<State>) -> AnyReducer<State> {
         return { (state, action) in
             if let action = action as? ActionNaming, action.name == name {
                 return reducer((state ?? defaults) as! State, action.payload as? State)

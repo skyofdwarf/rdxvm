@@ -25,11 +25,11 @@ public protocol DynamicMemberLookupDictionary {
 
 /// extension to use dynamic member lookup on Dictionary
 public extension DynamicMemberLookupDictionary where Key == String {
-    public subscript(dynamicMember member: Key) -> Value? {
+    subscript(dynamicMember member: Key) -> Value? {
         return self[member]
     }
     
-    public subscript(dynamicMember member: Key) -> [Key: Value]? {
+    subscript(dynamicMember member: Key) -> [Key: Value]? {
         return self[member] as? [Key: Value]
     }
 
