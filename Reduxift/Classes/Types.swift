@@ -8,34 +8,12 @@
 
 import Foundation
 
+// MARK: - Common Types
 
+public typealias StoreDispatcher = (Action) -> Void
 
-/// common dispatcher type
-public typealias Dispatcher = (_ action: Action) -> Any
+public typealias Dispatcher = (Action) -> Action
 
+public typealias Canceller = () -> Void
 
-/// protocol to use dynamic member lookup on Dictionary
-@dynamicMemberLookup
-public protocol DynamicMemberLookupDictionary {
-    associatedtype Key
-    associatedtype Value
-    
-    subscript(key: Key) -> Value? { get }
-}
-
-/// extension to use dynamic member lookup on Dictionary
-public extension DynamicMemberLookupDictionary where Key == String {
-    subscript(dynamicMember member: Key) -> Value? {
-        return self[member]
-    }
-    
-    subscript(dynamicMember member: Key) -> [Key: Value]? {
-        return self[member] as? [Key: Value]
-    }
-
-}
-
-extension Dictionary: DynamicMemberLookupDictionary where Key == String {}
-
-extension Dictionary: State where Key == String {}
-
+public typealias Reducer<StateType: State> = (_ state: StateType, _ action: Action) -> StateType

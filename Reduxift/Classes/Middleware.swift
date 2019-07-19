@@ -8,60 +8,44 @@
 
 import Foundation
 
+// MARK: - Middleware Types
 
 /// dispatch transducer
 public typealias DispatchTransducer = (_ next: @escaping Dispatcher) -> Dispatcher
 
 /// type of middleware closure
-public typealias Middleware<S: State> = (_ state: @escaping Store<S>.GetState, _ dispatch: @escaping Dispatcher) -> DispatchTransducer
-
+public typealias Middleware<StateType: State> = (_ state: @escaping Store<StateType>.GetState, _ storeDispatch: @escaping StoreDispatcher) -> DispatchTransducer
 
 /// helper flatted type of middleware process
-public typealias MiddlewareProcess<S: State> = (
-    _ state: @escaping Store<S>.GetState,
-    _ dispatch: @escaping Dispatcher,
-    _ next: @escaping Dispatcher,
-    _ action: Action) -> Any
-
-
+public typealias MiddlewareProcess<StateType: State> = (
+    _ getState: @escaping Store<StateType>.GetState, ///< store getState funcion
+    _ storeDispatch: @escaping StoreDispatcher, ///< store dispach function
+    _ nextMiddleware: @escaping Dispatcher, ///< next middleware
+    _ action: Action) -> Action
 
 /// helper function to create middleware closure
 ///
 /// - Parameter process: closure of middleware process
 /// - Returns: middleware closure
-public func CreateMiddleware<S: State>(_ process: @escaping MiddlewareProcess<S>) -> Middleware<S> {
-    return { (state, dispatch) in
+public func CreateMiddleware<StateType: State>(_ process: @escaping MiddlewareProcess<StateType>) -> Middleware<StateType> {
+    return { (getState, storeDispatch) in
         return { (next) in
             return { (action) in
-                return process(state, dispatch, next, action)
+                return process(getState, storeDispatch, next, action)
             }
         }
     }
 }
 
+// MARK: - Default Middlewares
 
-public typealias FunctionMiddlewareFunction<State: State> = (_ state: Store<State>.GetState, _ action: Action) -> Void
-
-/// function middleware, calls a function before next middleware runs
+/// doable middleware
 ///
-/// - Parameter function: normal function to call
-/// - Returns: function middleware closure
-public func FunctionMiddleware<S: State>(_ function: @escaping FunctionMiddlewareFunction<S>) -> Middleware<S> {
-    return CreateMiddleware { (state, dispatch, next, action) in
-        function(state, action)
-        return next(action)
-    }
-}
-
-
-/// middleware for async action
-///
-/// - Returns: async middleware closure
-public func AsyncActionMiddleware<S: State>() -> Middleware<S> {
-    return CreateMiddleware { (state, dispatch, next, action) in
-        if let async = action.payload as? Action.Async {
-            // do not call `next(action)`
-            return async(dispatch) as Any
+/// - Returns: action middleware closure
+public func DoableMiddleware<StateType: State>() -> Middleware<StateType> {
+    return CreateMiddleware { (getState, storeDispatch, next, action) in
+        if let doable = action as? Doable {
+            return next(doable.do(storeDispatch))
         }
         else {
             return next(action)
@@ -69,12 +53,31 @@ public func AsyncActionMiddleware<S: State>() -> Middleware<S> {
     }
 }
 
-
-/// middleware to dispatch a action on main thread
+/// log middleware
 ///
-/// - Returns: main queue middleware closure
-public func MainQueueMiddleware<S: State>() -> Middleware<S> {
-    return CreateMiddleware { (state, dispatch, next, action) in
+/// - Returns: custom log middleware closure
+public func LogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger: @escaping (String, Action, Store<StateType>.GetState) -> Void) -> Middleware<StateType> {
+    return CreateMiddleware { (getState, storeDispatch, next, action) in
+        logger(tag, action, getState)
+        return next(action)
+    }
+}
+
+/// log middleware to log after applied next mw
+///
+/// - Returns: custom log middleware closure
+public func LazyLogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger: @escaping (String, Action, Store<StateType>.GetState) -> Void) -> Middleware<StateType> {
+    return CreateMiddleware { (getState, storeDispatch, next, action) in
+        defer { logger(tag, action, getState) }
+        return next(action)
+    }
+}
+
+/// main thread middleware
+///
+/// - Returns: main thread middleware closure
+public func MainThreadMiddleware<StateType: State>() -> Middleware<StateType> {
+    return CreateMiddleware { (getState, storeDispatch, next, action) in
         if Thread.isMainThread {
             return next(action)
         }
@@ -82,7 +85,8 @@ public func MainQueueMiddleware<S: State>() -> Middleware<S> {
             DispatchQueue.main.async {
                 _ = next(action)
             }
-            return action
         }
+
+        return Never.do
     }
 }

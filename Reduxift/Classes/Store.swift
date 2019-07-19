@@ -6,111 +6,97 @@
 //  Copyright © 2019년 dwarfini. All rights reserved.
 //
 
-import Foundation
-
-
-/// workaround protocol to workaround compile error of using a protocol with associated type
-///
-/// - Note: public but dont use in your app
-///
-/// workaround below compile error
-/// `Protocol 'protocol-name' can only be used as a generic constraint because it has Self or associated type requirements.`
-///
-public protocol StoreBaseSubscriber {
-    func callDelegate(state: State, action: Action)
-}
-
-public extension StoreSubscriber {
-    /// call real delegate function of subscriber
-    func callDelegate(state: State, action: Action) {
-        self.store(didChangeState: state as! S, action: action)
-    }
-}
-
-/// store subscriber delegate
-public protocol StoreSubscriber: class, StoreBaseSubscriber {
-    associatedtype S: State
-    func store(didChangeState state: S, action: Action)
-}
-
-
-
-/// typealiases for dictionary state
-public typealias DictionaryState = [String: Any]
-public typealias DictionaryStore = Store<DictionaryState>
-
-    
 /// Store
 ///
-/// Reduxift publishes not only new state but also the action which is cause of publishing
-public class Store<S: State> {
-    public typealias Reducer = (_ state: S, _ action: Action) -> S
-    public typealias GetState = () -> S
-    
-    public private(set) var state: S = S()
-    
-    
-    private var subscribers = NSHashTable<AnyObject>.weakObjects()
-    private var reducer: Reducer
-    private var dispatcher: Dispatcher!
-    
-    private var dispatching: Bool = false
-    
-    public init(state: S, reducer: @escaping Reducer, middlewares: [Middleware<S>]) {
-        self.reducer = reducer
-        self.dispatcher = self.buildDispatcher(middlewares: middlewares)
+/// `Store` dispatches `Action`s and publishes changes of `State`
+public class Store<StateType: State> {
+    public typealias Subscription = (_ state: StateType, _ action: Action) -> Void
+    public typealias GetState = () -> StateType
+
+    private typealias Warehouse = (dispatch: Dispatcher, getState: GetState)
+
+    private var subscriptions: [Subscription] = []
+    private var warehouse: Warehouse!
+
+    #if DEBUG
+    deinit {
+        print("\(String(describing: self)).\(#function)")
     }
-    
-    public convenience init(state: S, reducer: @escaping Reducer) {
-        self.init(state: state, reducer: reducer, middlewares: [])
+    #endif
+
+    public init(state initialState: StateType,
+                reducer: @escaping Reducer<StateType> = StateType.reduce,
+                middlewares: [Middleware<StateType>] = [])
+    {
+        self.warehouse = createWarehouse(state: initialState,
+                                         reducer: reducer,
+                                         middlewares: middlewares)
     }
-    
-    private func buildDispatcher(middlewares: [Middleware<S>]) -> Dispatcher {
-        let dispatcher: Dispatcher = { [unowned self] (action) in
-            guard !self.dispatching else {
-                fatalError("a store can't dispatch a action while processing other action already dispatched: \(action)")
-            }
-            self.dispatching = true
-            
-            self.state = self.reducer(self.state, action)
-            self.publish(self.state, action)
-            
-            self.dispatching = false
-            
-            return action
-        }
-        
-        let getState: Store.GetState = { [unowned self] in self.state }
-        let storeDispatcher: Dispatcher = { [unowned self] (action) in self.dispatcher(action) }
-        
-        return middlewares.reversed().reduce(dispatcher) { (dispatcher, mw) -> Dispatcher in
-            return mw(getState, storeDispatcher)(dispatcher)
-        }
+
+    /// Dispatches action
+    /// - Parameter action: action to dispatch
+    public func dispatch(_ action: Action) {
+        let actions = (action as? Array<Action>) ?? [ action ]
+
+        actions.forEach { _ = warehouse.dispatch($0) }
     }
-    
-    @discardableResult
-    public func dispatch(_ action: Action) -> Any {
-        return self.dispatcher(action)
+
+    /// Subscribes to be notified actions
+    /// - Parameter subscription: Subscription be called when action occurred
+    public func subscribe(_ subscription: @escaping Subscription) {
+        // TODO: Way to unsubscribe
+        subscriptions.append(subscription)
     }
-    
-    public func subscribe<T: StoreSubscriber>(_ subscriber: T) {
-        self.subscribers.add(subscriber)
-    }
-    
-    public func unsubscribe<T: StoreSubscriber>(_ subscriber: T) {
-        self.subscribers.remove(subscriber)
-    }
-    
-    private func publish(_ state: S, _ action: Action) {
-        self.subscribers.allObjects.forEach { (obj) in
-            if let subscriber = obj as? StoreBaseSubscriber {
-                subscriber.callDelegate(state: state, action: action)
-            }
-        }
-    }
-    
-    public static func reduce(_ reducer: @escaping Reducer) -> Reducer {
-        return reducer
+
+    /// Get current state
+    public func getState() -> StateType {
+        return warehouse.getState()
     }
 }
 
+extension Store {
+    /*
+     To avoid memory leaks by capture cycle between closures,
+     the state is implemented as local variable being captured in `getState` interface closure.
+     And closures related `dispatcher` interface, can `Never.do` when `self` is deallocated.
+     */
+    private func createWarehouse(state: StateType,
+                                 reducer: @escaping Reducer<StateType>,
+                                 middlewares: [Middleware<StateType>]) -> Warehouse
+    {
+        // State of the store is local variable and used/captured in below closures
+        var state = state
+
+        // Interface to get state
+        let getState: GetState = { state }
+
+        let rootDispatcher: Dispatcher = { [weak self = self] action -> Action in
+            guard let self = self else { return Never.do }
+
+            objc_sync_enter(self)
+            defer { objc_sync_exit(self) }
+
+            let actions = (action as? Array<Action>) ?? [ action ]
+
+            for action in actions {
+                state = reducer(state, action)
+
+                self.subscriptions.forEach { (subscription) in
+                    subscription(state, action)
+                }
+            }
+
+            return action
+        }
+
+        let storeDispatcher: StoreDispatcher = { [weak self] in self?.dispatch($0) }
+
+        // Interface to dispatch action
+        let dispatcher = middlewares.reversed().reduce(rootDispatcher) { dispatcher, middleware in
+            return middleware(getState, storeDispatcher)(dispatcher)
+        }
+
+        // Return tuple to interface with warehouse
+        return (dispatcher, getState)
+    }
+}

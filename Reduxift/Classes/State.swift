@@ -5,21 +5,11 @@
 //  Created by skyofdwarf on 2019. 2. 1..
 //
 
-import Foundation
-
-
-/// state protocol
-public protocol State {
-    /// default initialization
-    init()
-    
+/// Implement reduce(_:_:) static method to use `State` for `Store`.
+public protocol Reducible {
+    static func reduce(_ state: Self, _ action: Action) -> Self
 }
 
-extension State {
-    public typealias Reducer = (_ state: Self, _ action: Action) -> Self
-    
-    public static func reduce(_ reducer: @escaping Reducer) -> Reducer {
-        return reducer
-    }
+/// `State` is a data collection for Store.
+public protocol State: Reducible {
 }
-
