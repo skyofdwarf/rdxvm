@@ -16,6 +16,7 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		CE497B6C2394CF27003DEFCB /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE497B6B2394CF27003DEFCB /* Common.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		8AB6344E42B9DB31484E9656 /* Pods_Reduxift_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Reduxift_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CE5B62D7AA6CF9EBC8ED6C2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		AD755969F3A304E83FA0CAD1 /* Pods-Reduxift_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Reduxift_Tests/Pods-Reduxift_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		CE497B6B2394CF27003DEFCB /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		DA338A03CD4486F085842CD9 /* Pods-Reduxift_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Reduxift_Tests/Pods-Reduxift_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		DACB34F85736EC4CBDC7D67A /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		DB1532002670CAF3E8D17B3F /* Pods-Reduxift_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Reduxift_Example/Pods-Reduxift_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				CE497B6B2394CF27003DEFCB /* Common.swift */,
 			);
 			name = "Example for Reduxift";
 			path = Reduxift;
@@ -356,6 +359,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE497B6C2394CF27003DEFCB /* Common.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				56FC46DF2201E86900A54BA9 /* RandomDogViewController.swift in Sources */,
 				56FC46DD2201E84200A54BA9 /* BreedListViewController.swift in Sources */,

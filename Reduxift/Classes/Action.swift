@@ -19,7 +19,6 @@ public protocol Action {
 public typealias Reaction = Action
 
 
-
 // MARK: - Extensions
 
 extension NSNull: Action {}

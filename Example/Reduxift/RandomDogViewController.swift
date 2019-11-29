@@ -10,55 +10,60 @@ import UIKit
 import Reduxift
 
 
-enum RandomDogAction: Action, Doable {
-    case fetch(breed: String?)
-    case cancel(Canceller)
-    case alert(String)
+enum RandomDogAction {
+    enum Fetch: Action, Doable {
+        case start(breed: String?)
+        case cancel(Canceller)
 
-    enum Result: Reaction {
-        case reload(url: String)
-        case fetching(Canceller)
+        enum Output: Reaction {
+            case response(Result<String, Error>)
+            case fetching(Canceller)
+        }
+    }
+
+    enum Alert: Action {
+        case hide
     }
 }
 
-extension RandomDogAction {
+extension RandomDogAction.Fetch {
     func `do`(_ dispatch: @escaping StoreDispatcher) -> Reaction {
         switch self {
-        case .fetch(let breed):
+        case .start(let breed):
             let urlString = ((breed == nil) ?
                 "https://dog.ceo/api/breeds/image/random":
                 "https://dog.ceo/api/breed/\(breed!)/images/random")
 
             guard let url = URL(string: urlString) else {
-                dispatch(RandomDogAction.alert("failed to create a url of random dog for breed: \(breed ?? "no brred")"))
+                dispatch(Output.response(.failure("failed to create a url of random dog for breed: \(breed ?? "no brred")")))
                 return Never.do
             }
             let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
                 guard error == nil else {
-                    dispatch(RandomDogAction.alert("failed to load breeds: \(error!)"))
+                    dispatch(Output.response(.failure(error!)))
                     return
                 }
 
                 guard
                     let data = data,
                     let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any] else {
-                        dispatch(RandomDogAction.alert("failed to parse json from response"))
+                        dispatch(Output.response(.failure("failed to parse json from response")))
                         return
                 }
 
                 if let imageUrl = json["message"] as Any? as? String {
                     print("image url: \(imageUrl)")
-                    dispatch(RandomDogAction.Result.reload(url: imageUrl))
+                    dispatch(Output.response(.success(imageUrl)))
                 }
                 else {
                     print("no image url")
-                    dispatch(RandomDogAction.alert("no image url"))
+                    dispatch(Output.response(.failure("no image url")))
                 }
             })
 
             task.resume()
 
-            return RandomDogAction.Result.fetching({
+            return Output.fetching({
                 print("cancell ~~~~~~~~~")
                 task.cancel()
             })
@@ -66,12 +71,7 @@ extension RandomDogAction {
         case .cancel(let canceller):
             canceller()
             return self
-
-        default:
-            break;
         }
-
-        return Never.do
     }
 }
 
@@ -87,25 +87,35 @@ struct RandomDogState: State {
         var state = state
 
         switch action {
-        case RandomDogAction.Result.reload(let url):
-            state.imageUrl = url
+        case RandomDogAction.Fetch.Output.response(let result):
+            switch result {
+            case .success(let url):
+                state.imageUrl = url
+                state.canceller = nil
+                state.cancelling = false
+                state.fetching = false
 
-            state.canceller = nil
-            state.cancelling = false
-            state.fetching = true
+            case .failure(let error):
+                state.imageUrl = ""
+                state.canceller = nil
+                state.cancelling = false
+                state.fetching = false
+                state.alert = error.localizedDescription
+            }
 
-        case RandomDogAction.Result.fetching(let canceller):
+        case RandomDogAction.Fetch.Output.fetching(let canceller):
             state.canceller = canceller
             state.cancelling = false
             state.fetching = true
 
-        case RandomDogAction.cancel:
+        case RandomDogAction.Fetch.cancel:
             state.canceller = nil
             state.cancelling = true
-            state.fetching = true
+            state.fetching = false
 
-        case RandomDogAction.alert(let msg):
-            state.alert = msg
+        case RandomDogAction.Alert.hide:
+            state.alert = ""
+
         default:
             return state
         }
@@ -113,25 +123,9 @@ struct RandomDogState: State {
     }
 }
 
-fileprivate func middlewares<StateType: State>() -> [Middleware<StateType>] {
-    func simple_action_logger<StateType: State>(_ tag: String, action: Action, state: Store<StateType>.GetState) -> Void {
-        print("[\(tag)][Action] \(action)")
-    }
-
-    func simple_state_logger<StateType: State>(_ tag: String, action: Action, state: Store<StateType>.GetState) -> Void {
-        print("[\(tag)][State] \(state())")
-    }
-
-    return [ MainThreadMiddleware(),
-             LogMiddleware("ACTION", simple_action_logger),
-             DoableMiddleware(),
-             LogMiddleware("DO REACTION", simple_action_logger),
-             LazyLogMiddleware("RESULT", simple_state_logger),
-    ]
-}
-
 class RandomDogViewController: UIViewController {
     @IBOutlet weak var dogImageView: UIImageView!
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
 
     let store = Store(state: RandomDogState(), middlewares: middlewares())
 
@@ -153,16 +147,27 @@ class RandomDogViewController: UIViewController {
         
         self.navigationItem.rightBarButtonItems = [ fetchButton, cancelButton ]
         
-        self.store.subscribe { state, action in
-            if !state.alert.isEmpty {
-                self.alert(state.alert)
-            }
+        self.store.subscribe { [weak self] state, action in
+            guard let self = self else { return }
 
-            if !state.imageUrl.isEmpty {
-                // NOTE: Data(contentsOf:) blocks main thread while downloading.
-                if let url = URL(string: state.imageUrl), let data = try? Data(contentsOf: url) {
-                    self.dogImageView.image = UIImage(data: data)
+            switch action {
+            case RandomDogAction.Fetch.Output.response(let result):
+                switch result {
+                case .success(let url):
+                    if let url = URL(string: url), let data = try? Data(contentsOf: url) {
+                        self.dogImageView.image = UIImage(data: data)
+                    }
+                case .failure(let error):
+                    self.alert(error.localizedDescription)
                 }
+
+                self.indicatorView.stopAnimating()
+
+            case RandomDogAction.Fetch.Output.fetching:
+                self.indicatorView.startAnimating()
+
+            default:
+                break
             }
         }
     }
@@ -187,7 +192,7 @@ class RandomDogViewController: UIViewController {
     @objc func cancelButtonDidClick(_ sender: Any?) {
         guard let canceller = store.getState().canceller else { return }
 
-        store.dispatch(RandomDogAction.cancel(canceller))
+        store.dispatch(RandomDogAction.Fetch.cancel(canceller))
     }
     
     @objc func fetchButtonDidClick(_ sender: Any?) {
@@ -195,7 +200,7 @@ class RandomDogViewController: UIViewController {
     }
     
     func reload() {
-        store.dispatch(RandomDogAction.fetch(breed: self.breed))
+        store.dispatch(RandomDogAction.Fetch.start(breed: self.breed))
     }
 }
 
@@ -203,7 +208,7 @@ extension RandomDogViewController {
     func alert(_ msg: String) {
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default) { [unowned self] (actin) in
-            self.store.dispatch(RandomDogAction.alert(""))
+            self.store.dispatch(RandomDogAction.Alert.hide)
         })
         
         self.present(alert, animated: true, completion: nil)

@@ -44,11 +44,16 @@ public func CreateMiddleware<StateType: State>(_ process: @escaping MiddlewarePr
 /// - Returns: action middleware closure
 public func DoableMiddleware<StateType: State>() -> Middleware<StateType> {
     return CreateMiddleware { (getState, storeDispatch, next, action) in
-        if let doable = action as? Doable {
-            return next(doable.do(storeDispatch))
+        guard let doable = action as? Doable else {
+            return next(action)
+        }
+
+        let reaction = doable.do(storeDispatch)
+        if reaction is Never.Do {
+            return reaction
         }
         else {
-            return next(action)
+            return next(reaction)
         }
     }
 }

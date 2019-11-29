@@ -9,70 +9,76 @@
 import UIKit
 import Reduxift
 
-enum BreedListAction: Action, Doable {
-    case fetch(breed: String?)
-    case cancel(Canceller)
-    case alert(String)
+extension String: Error {
 
-    enum Result: Reaction {
-        case reload([String])
-        case fetching(Canceller)
+}
+
+enum BreedListAction: Action, Doable {
+    enum Fetch: Action, Doable {
+        case start(breed: String?)
+        case cancel(Canceller)
+
+        enum Output: Reaction {
+            case response(Result<[String], Error>)
+            case fetching(Canceller)
+        }
+    }
+
+    enum Alert: Action {
+        case hide
     }
 }
 
-extension BreedListAction {
+extension BreedListAction.Fetch {
     func `do`(_ dispatch: @escaping StoreDispatcher) -> Reaction {
         switch self {
-        case let .fetch(breed):
+        case let .start(breed):
             let urlString = "https://dog.ceo/api/breeds/\((breed != nil) ? breed! + "/list": "list/all")"
 
             guard let url = URL(string: urlString) else {
-                dispatch(BreedListAction.alert("failed to create a url for breed: \(breed ?? "no brred")"))
+                dispatch(Output.response(.failure("failed to create a url for breed: \(breed ?? "no brred")")))
                 return Never.do
             }
             let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
                 guard error == nil else {
-                    dispatch(BreedListAction.alert("failed to load breeds: \(error!)"))
+                    dispatch(Output.response(.failure("failed to load breeds: \(error!)")))
                     return
                 }
 
                 guard
                     let data = data,
                     let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any] else {
-                        _ = dispatch(BreedListAction.alert("failed to parse json from response"))
+                        _ = dispatch(Output.response(.failure("failed to parse json from response")))
                         return
                 }
 
                 if let breeds = json["message"] as Any? as? [String: Any] {
                     print("breeds: \(breeds)")
-                    dispatch(BreedListAction.Result.reload(Array(breeds.keys)))
+                    dispatch(Output.response(.success(Array(breeds.keys))))
                 }
                 else {
                     print("no breeds")
-                    dispatch(BreedListAction.Result.reload([]))
+                    dispatch(Output.response(.success([])))
                 }
             })
 
             task.resume()
 
-            return BreedListAction.Result.fetching({ task.cancel() })
+            return Output.fetching({ task.cancel() })
 
         case .cancel(let canceller):
             canceller()
-
-        default:
-            break;
+            return self
         }
-
-        return Never.do
     }
 }
 
 struct BreedListState: State {
+    var fetching: Bool = false
+    var cancelling: Bool = false
+
     var breeds: [String] = []
-    var shout: String = ""
-    var cats: String = ""
-    var alert: String = ""
+    var alert: String?
 
     var canceller: Canceller?
 
@@ -80,25 +86,33 @@ struct BreedListState: State {
         var state = state
 
         switch action {
-        case BreedListAction.Result.reload(let items):
-            state.breeds = items
-/* TODO: Add states for fetches and cancels
-            state.canceller = nil
-            state.cancelling = false
-            state.fetching = true
+        case BreedListAction.Fetch.Output.response(let result):
+            switch result {
+            case .success(let items):
+                state.breeds = items
+                state.canceller = nil
+                state.cancelling = false
+                state.fetching = false
+            case .failure(let error):
+                state.breeds = []
+                state.canceller = nil
+                state.cancelling = false
+                state.fetching = false
+                state.alert = error.localizedDescription
+            }
 
-        case BreedListAction.Result.fetching(let canceller):
+        case BreedListAction.Fetch.Output.fetching(let canceller):
             state.canceller = canceller
             state.cancelling = false
             state.fetching = true
 
-        case BreedListAction.cancel:
+        case BreedListAction.Fetch.cancel:
             state.canceller = nil
             state.cancelling = true
-            state.fetching = true
-*/
-        case BreedListAction.alert(let msg):
-            state.alert = msg
+            state.fetching = false
+
+        case BreedListAction.Alert.hide:
+            state.alert = nil
 
         default:
             break
@@ -107,26 +121,10 @@ struct BreedListState: State {
     }
 }
 
-fileprivate func middlewares<StateType: State>() -> [Middleware<StateType>] {
-    func simple_action_logger<StateType: State>(_ tag: String, action: Action, state: Store<StateType>.GetState) -> Void {
-        print("[\(tag)][Action] \(action)")
-    }
-
-    func simple_state_logger<StateType: State>(_ tag: String, action: Action, state: Store<StateType>.GetState) -> Void {
-        print("[\(tag)][State] \(state())")
-    }
-
-    return [ MainThreadMiddleware(),
-             LogMiddleware("ACTION", simple_action_logger),
-             DoableMiddleware(),
-             LogMiddleware("DO REACTION", simple_action_logger),
-             LazyLogMiddleware("RESULT", simple_state_logger),
-    ]
-}
-
 class BreedListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
-    
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+
     let store = Store(state: BreedListState(), middlewares: middlewares())
 
     
@@ -140,19 +138,34 @@ class BreedListViewController: UIViewController {
                                           target: self,
                                           action: #selector(BreedListViewController.fetchButtonDidClick))
 
+        let cancelButton = UIBarButtonItem(title: "Cancel",
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(BreedListViewController.cancelButtonDidClick))
+
         self.navigationItem.rightBarButtonItem = fetchButton
+        self.navigationItem.leftBarButtonItem = cancelButton
 
         self.store.subscribe { [weak self] state, action in
             guard let self = self else { return }
-            
-            print("new state: \(state)")
 
-            // update app by state
-            if let alert = state.alert as Any? as? String, !alert.isEmpty {
-                self.alert(alert)
+            switch action {
+            case BreedListAction.Fetch.Output.response(let result):
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    self.alert(error.localizedDescription)
+                }
+
+                self.indicatorView.stopAnimating()
+
+            case BreedListAction.Fetch.Output.fetching:
+                self.indicatorView.startAnimating()
+
+            default:
+                break
             }
-
-            self.tableView.reloadData()
         }
     }
     
@@ -170,15 +183,22 @@ class BreedListViewController: UIViewController {
 
         guard
             segue.identifier == "RandomDog",
-            let randomDogViewController = segue.destination as? RandomDogViewController
+            let randomDogViewController = segue.destination as? RandomDogViewController,
+            let breed = sender as? String
             else { return }
 
-
-        randomDogViewController.breed = store.getState().
+        randomDogViewController.breed = breed
     }
     
     @objc func fetchButtonDidClick(_ sender: Any) {
-        self.store.dispatch(BreedListAction.fetch(breed: nil))
+        self.store.dispatch(BreedListAction.Fetch.start(breed: nil))
+    }
+
+    @objc func cancelButtonDidClick(_ sender: Any) {
+        guard let canceller = store.getState().canceller else {
+            return
+        }
+        self.store.dispatch(BreedListAction.Fetch.cancel(canceller))
     }
 }
 
@@ -186,7 +206,7 @@ extension BreedListViewController {
     func alert(_ msg: String) {
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default) { [unowned self] (actin) in
-            self.store.dispatch(BreedListAction.alert(""))
+            self.store.dispatch(BreedListAction.Alert.hide)
         })
         
         self.present(alert, animated: true, completion: nil)
@@ -210,5 +230,14 @@ extension BreedListViewController: UITableViewDelegate {
         cell.textLabel?.text = breed
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard
+            let cell = tableView.cellForRow(at: indexPath),
+            let breed = cell.textLabel
+            else { return }
+
+        performSegue(withIdentifier: "RandomDog", sender: breed)
     }
 }
