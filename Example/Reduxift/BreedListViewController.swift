@@ -47,7 +47,7 @@ extension BreedListAction.Fetch {
 
                 guard
                     let data = data,
-                    let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any] else {
+                    let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                         _ = dispatch(Output.response(.failure("failed to parse json from response")))
                         return
                 }
