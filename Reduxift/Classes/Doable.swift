@@ -6,18 +6,21 @@
 //  Copyright © 2019 kimyj. All rights reserved.
 //
 
-/// `Doable` _do_ a side effect, like async task or access to other resources.
-/// Conform `Doable` to do a side effect and apply `DoableMiddleware` to your `Store`.
+/// `Doable` can _do_ a side effect for `Action`, like async task or access to other resources.
+///
+/// To use,
+/// 1. Conform `Action` to `Doable`
+/// 2. Add `DoableMiddleware` to `Store`
 public protocol Doable {
-    typealias Do = (@escaping StoreDispatcher) -> Reaction
-
+    /// You should return appropriate a Action that will be passed to chains of middleware instead of current Action.
+    ///
+    /// Return `self` just to pass current action
+    /// Return `Never.do` to ignore middleware chains
+    /// Or return whatever of `Action` fit intent.
+    ///
+    /// - Parameter dispatch: store dispatch function
     func `do`(_ dispatch: @escaping StoreDispatcher) -> Reaction
 }
-
-public extension Doable {
-    func `do`(_ dispatch: @escaping StoreDispatcher) -> Reaction { return Never.do }
-}
-
 
 /// Simple side effect chaining model for `Doable`, and it's maybe a alternative of some `Middleware`.
 public struct Doing: Action, Doable {

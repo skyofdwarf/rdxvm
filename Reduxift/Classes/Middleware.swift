@@ -39,8 +39,9 @@ public func CreateMiddleware<StateType: State>(_ process: @escaping MiddlewarePr
 
 // MARK: - Default Middlewares
 
-/// doable middleware
+/// Calls `do(_:)` if `Action` conforms `Doable`.
 ///
+/// if `Doable.do` method returns `Never.do`, then DoableMiddleware do stop calling chains of middleware.
 /// - Returns: action middleware closure
 public func DoableMiddleware<StateType: State>() -> Middleware<StateType> {
     return CreateMiddleware { (getState, storeDispatch, next, action) in
@@ -58,7 +59,7 @@ public func DoableMiddleware<StateType: State>() -> Middleware<StateType> {
     }
 }
 
-/// log middleware
+/// Calls logger function.
 ///
 /// - Returns: custom log middleware closure
 public func LogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger: @escaping (String, Action, Store<StateType>.GetState) -> Void) -> Middleware<StateType> {
@@ -68,7 +69,7 @@ public func LogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger: @es
     }
 }
 
-/// log middleware to log after applied next mw
+/// Calls logger function after middleware chainig.
 ///
 /// - Returns: custom log middleware closure
 public func LazyLogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger: @escaping (String, Action, Store<StateType>.GetState) -> Void) -> Middleware<StateType> {
@@ -78,7 +79,7 @@ public func LazyLogMiddleware<StateType: State>(_ tag: String = "LOG", _ logger:
     }
 }
 
-/// main thread middleware
+/// Make `Action` be dispatched in main thread.
 ///
 /// - Returns: main thread middleware closure
 public func MainThreadMiddleware<StateType: State>() -> Middleware<StateType> {

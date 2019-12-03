@@ -24,9 +24,9 @@ public typealias Reaction = Action
 extension NSNull: Action {}
 
 public extension Never {
-    /// `Never.do` means that _no reaction_.
+    /// `Never.do` means that _no-reaction_.
     ///
-    /// `Doable.do` method can return `Never.do` to mean _no reaction_.
+    /// `Doable.do` method can return `Never.do` to mean _no-reaction_ that stop middleware chains.
     static var `do`: Do { return Do() }
 
     /// `Never.Do` can be used to match an action with `Never.do`.

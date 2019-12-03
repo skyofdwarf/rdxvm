@@ -13,7 +13,7 @@ extension String: Error {
 
 }
 
-enum BreedListAction: Action, Doable {
+enum BreedListAction {
     enum Fetch: Action, Doable {
         case start(breed: String?)
         case cancel(Canceller)
