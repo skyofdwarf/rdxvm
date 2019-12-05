@@ -6,6 +6,8 @@
 //  Copyright © 2019년 dwarfini. All rights reserved.
 //
 
+import Foundation
+
 /// Store
 ///
 /// `Store` dispatches `Action`s and publishes changes of `State`

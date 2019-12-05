@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Reduxift'
-  s.version          = '0.4.0'
+  s.version          = '0.4.3'
   s.summary          = 'Redux-like implementation in Swift.'
 
 # This description is used to generate tags and improve search results.

@@ -6,6 +6,8 @@
 //  Copyright © 2019년 dwarfini. All rights reserved.
 //
 
+import Foundation
+
 // MARK: - Action
 
 /// `Action` is a thing that causes `State` changes.
