@@ -6,6 +6,8 @@
 //
 
 import XCTest
+import RxSwift
+import RxRelay
 @testable import Reduxift
 
 class ReduxiftTests: XCTestCase {
@@ -18,19 +20,453 @@ class ReduxiftTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func test_state() throws {
+        var db = DisposeBag()
+        
+        let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
+        let state = HappyState(lastMessage: nil,
+                               status: .idle,
+                               games: [.lol],
+                               fruits: [.apple])
+        let vm = StateViewModel(dependency: dependency, state: state)
+        
+        XCTAssert(vm.state.lastMessage == nil)
+        XCTAssert(vm.state.status == .idle)
+                
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        actionRelay.accept(.wakeup)
+        XCTAssert(vm.state.games == dependency.games)
+        XCTAssert(vm.state.fruits == dependency.fruits)
+        XCTAssert(vm.state.count == 1)
+        
+        actionRelay.accept(.play(.wow))
+        XCTAssert(vm.state.status == .playing(.wow))
+        XCTAssert(vm.state.count == 2)
+        
+        actionRelay.accept(.eat(.cherry))
+        XCTAssert(vm.state.status == .eating(.cherry))
+        XCTAssert(vm.state.count == 3)
+        
+        actionRelay.accept(.eat(.apple))
+        XCTAssert(vm.state.status == .eating(.apple))
+        XCTAssert(vm.state.count == 4)
+        
+        let message_rock = "I wanna ROCK !"
+                      
+        actionRelay.accept(.shout(message_rock))
+        XCTAssert(vm.state.lastMessage == message_rock)
+        XCTAssert(vm.state.count == 5)
+        
+        db = DisposeBag()
+        
+        let message_hear = "You hear me?"
+        
+        actionRelay.accept(.shout(message_hear))
+        
+        XCTAssert(vm.state.lastMessage != message_hear)
+        XCTAssert(vm.state.lastMessage == message_rock)
+        XCTAssert(vm.state.count == 5)
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        actionRelay.accept(.shout(message_hear))
+        
+        XCTAssert(vm.state.lastMessage == message_hear)
+        XCTAssert(vm.state.count == 6)
+        
+        XCTAssertEqual(vm.state.raw,
+                       HappyState(lastMessage: message_hear,
+                                  status: .eating(.apple),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 6))
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    func test_state_drive() throws {
+        var db = DisposeBag()
+        
+        let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
+        let state = HappyState(lastMessage: nil,
+                               status: .idle,
+                               games: [.lol],
+                               fruits: [.apple])
+        let vm = StateViewModel(dependency: dependency, state: state)
+        
+        XCTAssert(vm.state.lastMessage == nil)
+        XCTAssert(vm.state.status == .idle)
+                
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        func expect(_ tag: String, action: HappyAction) -> HappyState {
+            var lastState: HappyState!
+            
+            let expectation = XCTestExpectation(description: tag)
+            
+            vm.state
+                .drive(onNext: {
+                    lastState = $0
+                    
+                    expectation.fulfill()
+                })
+                .disposed(by: db)
+            
+            actionRelay.accept(action)
+            wait(for: [expectation], timeout: 1)
+            
+            return lastState
         }
+        
+        XCTAssertEqual(expect("wakeup", action: .wakeup),
+                       HappyState(lastMessage: nil,
+                                  status: .idle,
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 1))
+        
+        XCTAssertEqual(expect("play wow", action: .play(.wow)),
+                       HappyState(lastMessage: nil,
+                                  status: .playing(.wow),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 2))
+        
+        XCTAssertEqual(expect("eat cherry", action: .eat(.cherry)),
+                       HappyState(lastMessage: nil,
+                                  status: .eating(.cherry),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 3))
+        
+        XCTAssertEqual(expect("eat apple", action: .eat(.apple)),
+                       HappyState(lastMessage: nil,
+                                  status: .eating(.apple),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 4))
+        
+        let message_rock = "I wanna ROCK !"
+        
+        
+        XCTAssertEqual(expect("shout rock", action: .shout(message_rock)),
+                       HappyState(lastMessage: message_rock,
+                                  status: .eating(.apple),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 5))
+        
+        XCTAssertEqual(expect("shout rock", action: .shout(message_rock)),
+                       HappyState(lastMessage: message_rock,
+                                  status: .eating(.apple),
+                                  games: dependency.games,
+                                  fruits: dependency.fruits,
+                                  count: 6))
     }
 
+    func test_driving_state() throws {
+        var db = DisposeBag()
+        
+        let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
+        let state = DrivingHappyState(lastMessage: nil,
+                                      status: .idle,
+                                      games: [.lol],
+                                      fruits: [.apple])
+        let vm = DrivingStateViewModel(dependency: dependency, state: state)
+        
+        XCTAssert(vm.state.lastMessage == nil)
+        XCTAssert(vm.state.status == .idle)
+
+        let actionRelay = PublishRelay<HappyAction>()
+
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+
+        actionRelay.accept(.wakeup)
+        XCTAssert(vm.state.games == dependency.games)
+        XCTAssert(vm.state.fruits == dependency.fruits)
+        XCTAssertEqual(vm.state.count, 1)
+
+        actionRelay.accept(.play(.wow))
+        XCTAssert(vm.state.status == .playing(.wow))
+        XCTAssertEqual(vm.state.count, 2)
+
+        actionRelay.accept(.eat(.cherry))
+        XCTAssert(vm.state.status == .eating(.cherry))
+        XCTAssertEqual(vm.state.count, 3)
+
+        actionRelay.accept(.eat(.apple))
+        XCTAssert(vm.state.status == .eating(.apple))
+        XCTAssertEqual(vm.state.count, 4)
+
+        let message_rock = "I wanna ROCK !"
+
+        actionRelay.accept(.shout(message_rock))
+        XCTAssert(vm.state.lastMessage == message_rock)
+        XCTAssertEqual(vm.state.count, 5)
+
+        db = DisposeBag()
+
+        let message_hear = "You hear me?"
+
+        actionRelay.accept(.shout(message_hear))
+
+        XCTAssert(vm.state.lastMessage != message_hear)
+        XCTAssert(vm.state.lastMessage == message_rock)
+        XCTAssertEqual(vm.state.count, 5)
+
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+
+        actionRelay.accept(.shout(message_hear))
+
+        XCTAssert(vm.state.lastMessage == message_hear)
+        XCTAssertEqual(vm.state.count, 6)
+        
+        XCTAssertEqual(vm.state.raw,
+                       DrivingHappyState(lastMessage: message_hear,
+                                         status: .eating(.apple),
+                                         games: dependency.games,
+                                         fruits: dependency.fruits,
+                                         count: 6))
+    }
+    
+    func test_driving_state_drive() throws {
+        var db = DisposeBag()
+        
+        let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
+        let state = DrivingHappyState(lastMessage: nil,
+                                      status: .idle,
+                                      games: [],
+                                      fruits: [])
+        let vm = DrivingStateViewModel(dependency: dependency, state: state)
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        XCTAssertEqual(vm.state.raw,
+                       DrivingHappyState(lastMessage: nil,
+                                         status: .idle,
+                                         games: [],
+                                         fruits: [],
+                                         count: 0))
+        
+        let status = XCTestExpectation(description: "status")
+        let games = XCTestExpectation(description: "games")
+        
+        actionRelay.accept(.play(.sc))
+        
+        vm.state.$status
+            .drive(onNext: {
+                XCTAssertEqual($0, .playing(.sc))
+                status.fulfill()
+            })
+            .disposed(by: db)
+        
+        actionRelay.accept(.wakeup)
+        
+        vm.state.$games
+            .drive(onNext: {
+                XCTAssertEqual($0, dependency.games)
+                games.fulfill()
+            })
+            .disposed(by: db)
+        
+        wait(for: [status, games], timeout: 3)
+    }
+    
+    func test_driving_state_event() throws {
+        var db = DisposeBag()
+        
+        let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
+        let state = DrivingHappyState(lastMessage: nil,
+                                      status: .idle,
+                                      games: [],
+                                      fruits: [])
+        let vm = DrivingStateViewModel(dependency: dependency, state: state)
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+
+        let event = XCTestExpectation(description: "event")
+        vm.event
+            .emit(onNext: {
+                XCTAssertEqual($0, .win(.sc))
+                
+                event.fulfill()
+            })
+            .disposed(by: db)
+        
+        actionRelay.accept(.play(.sc))
+        
+        wait(for: [event], timeout: 5)
+    }
+    
+    func test_action_logger() throws {
+        var rawActionHistory: [HappyAction] = []
+        
+        // nontyped logger
+        let rawActionLogger: Middleware<HappyState, HappyAction> = nontyped_middleware { state, next, action in
+            rawActionHistory.append(action)
+            return next(action)
+        }
+                
+        let MSG_WAKEUP = "NO"
+        let MSG_PLAY = "I'm Hungry"
+        let MSG_EAT = "I'm FULL"
+        let MSG_SHOUT = "RAW SHOUT"
+        
+        // typed logger
+        let actionTransformer = StateViewModel.middleware.action { state, next, action in
+            switch action {
+            case .wakeup:
+                return next(.shout(MSG_WAKEUP))
+            case .play:
+                return next(.shout(MSG_PLAY))
+            case .eat:
+                return next(.shout(MSG_EAT))
+            case .shout(let msg):
+                return next(.shout(msg))
+            }
+        }
+        
+        let dependency = Dependency(games: [.lol, .wow],
+                                    fruits: [.apple, .cherry])
+        let db = DisposeBag()
+        let vm = StateViewModel(dependency: dependency,
+                                state: HappyState(),
+                                actionMiddlewares: [rawActionLogger, actionTransformer])
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        XCTAssertEqual(vm.state.status, .idle)
+        
+        actionRelay.accept(.wakeup)
+        
+        XCTAssertEqual(rawActionHistory.last, .wakeup)
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_WAKEUP)
+        
+        actionRelay.accept(.play(.lol))
+        
+        XCTAssertEqual(rawActionHistory.last, .play(.lol))
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_PLAY)
+        
+        actionRelay.accept(.shout(MSG_SHOUT))
+        
+        XCTAssertEqual(rawActionHistory.last, .shout(MSG_SHOUT))
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_SHOUT)
+    }
+    
+    func test_action_ignore_logger() throws {
+        var rawActionHistory: [HappyAction] = []
+        
+        // nontyped logger
+        let rawActionLogger: Middleware<HappyState, HappyAction> = nontyped_middleware { state, next, action in
+            rawActionHistory.append(action)
+            return next(action)
+        }
+        
+        // typed logger
+        let actionIgnoring = StateViewModel.middleware.action { state, next, action in
+            // dose not call next(action)
+            return action
+        }
+        
+        let dependency = Dependency(games: [.lol, .wow],
+                                    fruits: [.apple, .cherry])
+        let state = HappyState()
+        
+        let db = DisposeBag()
+        let vm = StateViewModel(dependency: dependency,
+                                state: state,
+                                actionMiddlewares: [rawActionLogger, actionIgnoring])
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        XCTAssertEqual(vm.state.status, .idle)
+        
+        actionRelay.accept(.wakeup)
+        
+        XCTAssertEqual(rawActionHistory.last, .wakeup)
+        XCTAssertEqual(vm.state.raw, state)
+        
+        actionRelay.accept(.play(.lol))
+        
+        XCTAssertEqual(rawActionHistory.last, .play(.lol))
+        XCTAssertEqual(vm.state.raw, state)
+        
+        actionRelay.accept(.shout("HAH"))
+        
+        XCTAssertEqual(rawActionHistory.last, .shout("HAH"))
+        XCTAssertEqual(vm.state.raw, state)
+    }
+    
+    func test_mutation_logger() throws {
+        var rawMutationHistory: [HappyMutation] = []
+        
+        // nontyped logger
+        let rawMutationLogger: Middleware<HappyState, HappyMutation> = nontyped_middleware { state, next, mutation in
+            rawMutationHistory.append(mutation)
+            return next(mutation)
+        }
+                
+        let MSG_OTHER = "I'm not ready"
+        let MSG_SHOUT = "shooooout"
+        
+        // typed logger
+        let mutationTransformer = StateViewModel.middleware.mutation { state, next, mutation in
+            switch mutation {
+            case .lastMessage:
+                return next(mutation)
+            default:
+                return next(.lastMessage(MSG_OTHER))
+            }
+        }
+        
+        let dependency = Dependency(games: [.lol, .wow],
+                                    fruits: [.apple, .cherry])
+        let db = DisposeBag()
+        let vm = StateViewModel(dependency: dependency,
+                                state: HappyState(),
+                                mutationMiddlewares: [rawMutationLogger, mutationTransformer])
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        XCTAssertEqual(vm.state.status, .idle)
+        
+        actionRelay.accept(.wakeup)
+        
+        XCTAssertEqual(rawMutationHistory.last, .ready(dependency.games, dependency.fruits))
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_OTHER)
+        
+        actionRelay.accept(.play(.lol))
+        
+        XCTAssertEqual(rawMutationHistory.last, .status(.playing(.lol)))
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_OTHER)
+        
+        actionRelay.accept(.shout(MSG_SHOUT))
+        
+        XCTAssertEqual(rawMutationHistory.last, .lastMessage(MSG_SHOUT))
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.lastMessage, MSG_SHOUT)
+    }
 }

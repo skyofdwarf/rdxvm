@@ -15,6 +15,10 @@
 		42E5A2BC27943F9100BA84AA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2B727943F9100BA84AA /* Types.swift */; };
 		42E5A2BD27943F9100BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2B827943F9100BA84AA /* ViewModel.swift */; };
 		42E5A2BE27943F9100BA84AA /* Driving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2B927943F9100BA84AA /* Driving.swift */; };
+		42E5A2C42794406800BA84AA /* TestViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2BF2794406800BA84AA /* TestViewModels.swift */; };
+		42E5A2C62794406800BA84AA /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2C12794406800BA84AA /* Observable+Extensions.swift */; };
+		42E5A2C72794406800BA84AA /* TestTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2C22794406800BA84AA /* TestTypes.swift */; };
+		42E5A2C82794406800BA84AA /* Middlewares.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A2C32794406800BA84AA /* Middlewares.swift */; };
 		596A44ED0620C7C244146121 /* Pods_Reduxift_ReduxiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D2580EF0221E443D9C73D7 /* Pods_Reduxift_ReduxiftTests.framework */; };
 		64968FFF6838FEA0ED764FFC /* Pods_Reduxift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA6E42D22BB8B8668341B5C /* Pods_Reduxift.framework */; };
 /* End PBXBuildFile section */
@@ -41,6 +45,10 @@
 		42E5A2B727943F9100BA84AA /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		42E5A2B827943F9100BA84AA /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		42E5A2B927943F9100BA84AA /* Driving.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driving.swift; sourceTree = "<group>"; };
+		42E5A2BF2794406800BA84AA /* TestViewModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewModels.swift; sourceTree = "<group>"; };
+		42E5A2C12794406800BA84AA /* Observable+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
+		42E5A2C22794406800BA84AA /* TestTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypes.swift; sourceTree = "<group>"; };
+		42E5A2C32794406800BA84AA /* Middlewares.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middlewares.swift; sourceTree = "<group>"; };
 		72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.release.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.release.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.release.xcconfig"; sourceTree = "<group>"; };
 		DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -115,9 +123,29 @@
 		4232CBD02791BDBE00168DE5 /* ReduxiftTests */ = {
 			isa = PBXGroup;
 			children = (
+				42E5A2C92794406C00BA84AA /* Extensions */,
+				42E5A2CA2794408C00BA84AA /* Sources */,
 				42E5A2A727941A3100BA84AA /* ReduxiftTests.swift */,
 			);
 			path = ReduxiftTests;
+			sourceTree = "<group>";
+		};
+		42E5A2C92794406C00BA84AA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				42E5A2C12794406800BA84AA /* Observable+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		42E5A2CA2794408C00BA84AA /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				42E5A2C32794406800BA84AA /* Middlewares.swift */,
+				42E5A2C22794406800BA84AA /* TestTypes.swift */,
+				42E5A2BF2794406800BA84AA /* TestViewModels.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		E9D6B214F65E247B17B1408D /* Frameworks */ = {
@@ -318,7 +346,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42E5A2C42794406800BA84AA /* TestViewModels.swift in Sources */,
 				42E5A2A827941A3100BA84AA /* ReduxiftTests.swift in Sources */,
+				42E5A2C62794406800BA84AA /* Observable+Extensions.swift in Sources */,
+				42E5A2C72794406800BA84AA /* TestTypes.swift in Sources */,
+				42E5A2C82794406800BA84AA /* Middlewares.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
