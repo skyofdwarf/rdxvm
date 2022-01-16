@@ -50,22 +50,22 @@ import RxCocoa
 ///     print(vm.state.bar)
 ///     ```
 @dynamicMemberLookup
-struct StateDriver<State: ViewModelState> {
+public struct StateDriver<State: ViewModelState> {
     private let relay: BehaviorRelay<State>
-    init (_ relay: BehaviorRelay<State>) { self.relay = relay }
+    public init (_ relay: BehaviorRelay<State>) { self.relay = relay }
     
     /// get read-only raw state
-    var raw: State { relay.value }
+    public var raw: State { relay.value }
     
     /// get @Driving property
-    subscript<T: SharedSequenceConvertibleType>(dynamicMember keyPath: KeyPath<State, T>) -> T {
+    public subscript<T: SharedSequenceConvertibleType>(dynamicMember keyPath: KeyPath<State, T>) -> T {
         get {
             relay.value[keyPath: keyPath]
         }
     }
     
     /// get normal property
-    subscript<T>(dynamicMember keyPath: KeyPath<State, T>) -> T {
+    public subscript<T>(dynamicMember keyPath: KeyPath<State, T>) -> T {
         get {
             relay.value[keyPath: keyPath]
         }
@@ -73,14 +73,14 @@ struct StateDriver<State: ViewModelState> {
 }
 
 extension StateDriver: SharedSequenceConvertibleType {
-    typealias SharingStrategy = DriverSharingStrategy
-    typealias Element = State
+    public typealias SharingStrategy = DriverSharingStrategy
+    public typealias Element = State
     
-    func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
+    public func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
         relay.asDriver()
     }
 }
 
 extension StateDriver: CustomStringConvertible where State: CustomStringConvertible {
-    var description: String { relay.value.description }
+    public var description: String { relay.value.description }
 }

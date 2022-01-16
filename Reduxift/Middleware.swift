@@ -7,13 +7,13 @@
 
 import Foundation
 
-typealias Middleware<State: ViewModelState, T> = (@escaping GetState<State>) -> MiddlewareTranducer<T>
-typealias GetState<State: ViewModelState> = () -> State
-typealias MiddlewareTranducer<T> = (@escaping Dispatch<T>) -> Dispatch<T>
-typealias Dispatch<T> = (T) -> T
+public typealias Middleware<State: ViewModelState, T> = (@escaping GetState<State>) -> MiddlewareTranducer<T>
+public typealias GetState<State: ViewModelState> = () -> State
+public typealias MiddlewareTranducer<T> = (@escaping Dispatch<T>) -> Dispatch<T>
+public typealias Dispatch<T> = (T) -> T
 
-typealias StateMiddleware<State: ViewModelState> = StateMiddlewareTranducer<State>//() -> StateMiddlewareTranducer<State>
-typealias StateMiddlewareTranducer<State: ViewModelState> = (@escaping Dispatch<State>) -> Dispatch<State>
+public typealias StateMiddleware<State: ViewModelState> = StateMiddlewareTranducer<State>//() -> StateMiddlewareTranducer<State>
+public typealias StateMiddlewareTranducer<State: ViewModelState> = (@escaping Dispatch<State>) -> Dispatch<State>
 
 /// Use this method to create a non-typed middleware
 /// - Parameter process: middleware logic
@@ -46,7 +46,7 @@ typealias StateMiddlewareTranducer<State: ViewModelState> = (@escaping Dispatch<
 ///             return next(action)
 ///         }
 ///     }
-func nontyped_middleware<State: ViewModelState, T>(_ process: @escaping (_ state: GetState<State>, _ next: Dispatch<T>, _ action: T) -> T) -> Middleware<State, T> {
+public func nontyped_middleware<State: ViewModelState, T>(_ process: @escaping (_ state: GetState<State>, _ next: Dispatch<T>, _ action: T) -> T) -> Middleware<State, T> {
     { state in
         { next in
             { action in
@@ -56,7 +56,7 @@ func nontyped_middleware<State: ViewModelState, T>(_ process: @escaping (_ state
     }
 }
 
-func nontyped_state_middleware<State: ViewModelState>(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware<State> {
+public func nontyped_state_middleware<State: ViewModelState>(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware<State> {
     { next in
         { state in
             // do ...

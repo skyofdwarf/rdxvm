@@ -14,10 +14,10 @@ import RxCocoa
 ///
 /// Bind actions with `action` property and bind `state`, `event` properties to get data and evnets.
 /// Way to use `state` property is depend on State protocol you conforming.
-class ViewModel<Action: ViewModelAction,
-                Mutation: ViewModelMutation,
-                State: ViewModelState,
-                Event: ViewModelEvent>
+public class ViewModel<Action: ViewModelAction,
+                       Mutation: ViewModelMutation,
+                       State: ViewModelState,
+                       Event: ViewModelEvent>
 {
     typealias Action = Action
     typealias Mutation = Mutation

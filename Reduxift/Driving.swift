@@ -24,8 +24,8 @@ import RxCocoa
 /// vm.state.$props.drive(to: ...)
 /// ```
 @propertyWrapper
-struct Driving<Element> {
-    var wrappedValue: Element {
+public struct Driving<Element> {
+    public var wrappedValue: Element {
         get {
             relay.value
         }
@@ -34,27 +34,27 @@ struct Driving<Element> {
         }
     }
     
-    var projectedValue: Self { self }
+    public var projectedValue: Self { self }
     fileprivate let relay: BehaviorRelay<Element>
     
-    init(wrappedValue: Element) {
+    public init(wrappedValue: Element) {
         self.relay = BehaviorRelay<Element>(value: wrappedValue)
     }
 }
 
-protocol Driverable {
+public protocol Driverable {
     associatedtype Element
     func asDriver() -> Driver<Element>
 }
 
 extension Driving: Driverable {
-    func asDriver() -> Driver<Element> {
+    public func asDriver() -> Driver<Element> {
         relay.asDriver()
     }
 }
 
 extension Driving: SharedSequenceConvertibleType {
-    func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
+    public func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
         relay.asDriver()
     }
 }

@@ -10,23 +10,23 @@ import Foundation
 // MARK: - Action
 
 /// ViewModel action protocol. All action type should conform this protocol.
-protocol ViewModelAction {
+public protocol ViewModelAction {
 }
 
 // MARK: - Mutation
 
 /// ViewModel mutation protocol.
-protocol ViewModelMutation {
+public protocol ViewModelMutation {
 }
 
 // MARK: - Event
 
 /// ViewModel Event base protocol. All event type should conform this protocol.
-protocol ViewModelEvent {
+public protocol ViewModelEvent {
 }
 
 // MARK: - State
 
 /// ViewModel State base protocol.
-protocol ViewModelState {
+public protocol ViewModelState {
 }
