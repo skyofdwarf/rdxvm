@@ -31,7 +31,7 @@ Reduxift is another view model inspired by Redux, MVVM, and ReactorKit. It expos
   s.ios.deployment_target = '9.0'
   s.swift_version = '5'
 
-  s.source_files = 'Reduxift/**/*'
+  s.source_files = 'Sources/Reduxift/**/*'
   
   # s.resource_bundles = {
   #   'Reduxift' => ['Reduxift/Assets/*.png']
