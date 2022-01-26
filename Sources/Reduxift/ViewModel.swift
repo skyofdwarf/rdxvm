@@ -14,30 +14,30 @@ import RxCocoa
 ///
 /// Bind actions with `action` property and bind `state`, `event` properties to get data and evnets.
 /// Way to use `state` property is depend on State protocol you conforming.
-public class ViewModel<Action: ViewModelAction,
-                       Mutation: ViewModelMutation,
-                       State: ViewModelState,
-                       Event: ViewModelEvent>
+open class ViewModel<Action: ViewModelAction,
+                     Mutation: ViewModelMutation,
+                     State: ViewModelState,
+                     Event: ViewModelEvent>
 {
-    typealias Action = Action
-    typealias Mutation = Mutation
-    typealias State = State
-    typealias Event = Event
+    public typealias Action = Action
+    public typealias Mutation = Mutation
+    public typealias State = State
+    public typealias Event = Event
         
-    typealias ActionMiddleware = Middleware<Action>
-    typealias MutationMiddleware = Middleware<Mutation>
-    typealias EventMiddleware = Middleware<Event>
+    public typealias ActionMiddleware = Middleware<Action>
+    public typealias MutationMiddleware = Middleware<Mutation>
+    public typealias EventMiddleware = Middleware<Event>
         
-    typealias GetState = () -> State
-    typealias Dispatch<What> = (What) -> What
-    typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
-    typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
+    public typealias GetState = () -> State
+    public typealias Dispatch<What> = (What) -> What
+    public typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
+    public typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
     
-    typealias StateMiddleware = StateMiddlewareTranducer//() -> StateMiddlewareTranducer
-    typealias StateMiddlewareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
+    public typealias StateMiddleware = StateMiddlewareTranducer//() -> StateMiddlewareTranducer
+    public typealias StateMiddlewareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
         
     /// Reaction is side-effect of Action
-    enum Reaction {
+    public enum Reaction {
         case mutation(Mutation)
         case event(Event)
         
@@ -52,17 +52,17 @@ public class ViewModel<Action: ViewModelAction,
     }
     
     /// Middleware helper type
-    struct MiddlewareGenerator {
-        func action(_ process: @escaping (_ state: GetState, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
+    public struct MiddlewareGenerator {
+        public func action(_ process: @escaping (_ state: GetState, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
             nontyped_middleware(process)
         }
-        func mutation(_ process: @escaping (_ state: GetState, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
+        public func mutation(_ process: @escaping (_ state: GetState, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
             nontyped_middleware(process)
         }
-        func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
+        public func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
             nontyped_middleware(process)
         }
-        func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware {
+        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware {
             nontyped_state_middleware(process)
         }
     }
@@ -70,20 +70,20 @@ public class ViewModel<Action: ViewModelAction,
     // MARK: - Interfaces
 
     /// Middleware generator
-    static var middleware: MiddlewareGenerator { MiddlewareGenerator() }
+    public static var middleware: MiddlewareGenerator { MiddlewareGenerator() }
     
     // Action
-    var action: Binder<Action> {
+    public var action: Binder<Action> {
         Binder<Action>(self) { base, action in
             base.userActionRelay.accept(action)
         }
     }
     
     // Event output
-    var event: Signal<Event> { eventRelay.asSignal() }
+    public var event: Signal<Event> { eventRelay.asSignal() }
     
     // State output
-    var state: StateDriver<State> { StateDriver(stateRelay) }
+    public var state: StateDriver<State> { StateDriver(stateRelay) }
 
     // MARK: - Private properties
     
@@ -98,8 +98,10 @@ public class ViewModel<Action: ViewModelAction,
     fileprivate let stateRelay: BehaviorRelay<State>
     
     deinit {
+#if DEBUG
         print("deinit: \(self)")
-    }
+#endif
+    }    
     
     // MARK: - Intialize
         
@@ -109,11 +111,11 @@ public class ViewModel<Action: ViewModelAction,
     ///   - actionMiddlewares: action middlewares
     ///   - mutationMiddlewares: mutation middlewares
     ///   - eventMiddlewares: event middlewares
-    init(state initialState: State,
-         actionMiddlewares: [ActionMiddleware] = [],
-         mutationMiddlewares: [MutationMiddleware] = [],
-         eventMiddlewares: [EventMiddleware] = [],
-         stateMiddlewares: [StateMiddleware] = [])
+    public init(state initialState: State,
+                actionMiddlewares: [ActionMiddleware] = [],
+                mutationMiddlewares: [MutationMiddleware] = [],
+                eventMiddlewares: [EventMiddleware] = [],
+                stateMiddlewares: [StateMiddleware] = [])
     {
         // state
         stateRelay = BehaviorRelay<State>(value: initialState)
@@ -125,7 +127,6 @@ public class ViewModel<Action: ViewModelAction,
         
         // middleware(raw action) -> action
         userActionRelay
-            .debug("[ViewModel] user action")
             .subscribe(onNext: {
                 _ = dispatchAction($0)
             })
@@ -133,20 +134,17 @@ public class ViewModel<Action: ViewModelAction,
 
         // react(action) -> reaction
         actionRelay
-            .debug("[ViewModel] action 1")
             .withLatestFrom(stateRelay) { ($0, $1) }
             .flatMap { [weak self] (action, state) -> Observable<Reaction> in
                 guard let self = self else { return .empty() }
                 return self.react(action: action, state: state)
             }
-            .debug("[ViewModel] action 2")
             .bind(to: reactionRelay)
             .disposed(by: db)
         
         // middleware(reaction.muation) -> mutation
         reactionRelay
             .compactMap { $0.mutation }
-            .debug("[ViewModel] mutation")
             .subscribe(onNext: {
                 _ = dispatchMutation($0)
             })
@@ -155,7 +153,6 @@ public class ViewModel<Action: ViewModelAction,
         // middleware(reaction.event) -> event
         reactionRelay
             .compactMap { $0.event }
-            .debug("[ViewModel] event")
             .subscribe(onNext: {
                 _ = dispatchEvent($0)
             })
@@ -168,7 +165,6 @@ public class ViewModel<Action: ViewModelAction,
                 return self.reduce(mutation: mutation, state: state)
             }
             .flatMap { statePostMiddleware($0) }
-            .debug("[ViewModel] state")
             .bind(to: stateRelay)
             .disposed(by: db)
     }
@@ -182,7 +178,7 @@ public class ViewModel<Action: ViewModelAction,
     ///   - action: action to react
     ///   - state: current state
     /// - Returns: an observable of reactions
-    func react(action: Action, state: State) -> Observable<Reaction> {
+    open func react(action: Action, state: State) -> Observable<Reaction> {
         fatalError("Override this method to use ViewModel")
     }
     
@@ -192,7 +188,7 @@ public class ViewModel<Action: ViewModelAction,
     ///   - mutation: a mutation
     ///   - state: current state
     /// - Returns: new state
-    func reduce(mutation: Mutation, state: State) -> State {
+    open func reduce(mutation: Mutation, state: State) -> State {
         state
     }
     
