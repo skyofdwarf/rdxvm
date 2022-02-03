@@ -469,4 +469,26 @@ class ReduxiftTests: XCTestCase {
         XCTAssertEqual(vm.state.status, .idle)
         XCTAssertEqual(vm.state.lastMessage, MSG_SHOUT)
     }
+    
+    func test_mutation_error() throws {
+        let db = DisposeBag()
+        let vm = ErrorViewModel()
+        
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        let expectation = XCTestExpectation(description: "error")
+        
+        vm.error
+            .emit(onNext: { _ in
+                expectation.fulfill()
+            })
+            .disposed(by: db)
+        
+        actionRelay.accept(.wakeup)
+        
+        wait(for: [expectation], timeout: 1)
+    }
 }

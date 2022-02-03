@@ -12,8 +12,7 @@ import RxCocoa
 
 /// Redux like ViewModel class.
 ///
-/// Bind actions with `action` property and bind `state`, `event` properties to get data and evnets.
-/// Way to use `state` property is depend on State protocol you conforming.
+/// Bind actions with `action` property and bind `state`, `event` and `error` properties to get data, evnets and uncached errors.
 open class ViewModel<Action: ViewModelAction,
                      Mutation: ViewModelMutation,
                      State: ViewModelState,
@@ -79,6 +78,9 @@ open class ViewModel<Action: ViewModelAction,
         }
     }
     
+    // Error output
+    public var error: Signal<Error> { errorRelay.asSignal() }
+
     // Event output
     public var event: Signal<Event> { eventRelay.asSignal() }
     
@@ -96,6 +98,7 @@ open class ViewModel<Action: ViewModelAction,
     fileprivate let mutationRelay = PublishRelay<Mutation>()
     fileprivate let eventRelay = PublishRelay<Event>()
     fileprivate let stateRelay: BehaviorRelay<State>
+    fileprivate let errorRelay = PublishRelay<Error>()
     
     deinit {
 #if DEBUG
@@ -138,6 +141,10 @@ open class ViewModel<Action: ViewModelAction,
             .flatMap { [weak self] (action, state) -> Observable<Reaction> in
                 guard let self = self else { return .empty() }
                 return self.react(action: action, state: state)
+            }
+            .catch { [weak self] in
+                self?.errorRelay.accept($0)
+                return .empty()
             }
             .bind(to: reactionRelay)
             .disposed(by: db)

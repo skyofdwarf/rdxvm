@@ -114,3 +114,18 @@ final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, Driving
         return state
     }
 }
+
+final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyState, HappyEvent> {
+    init() {
+        super.init(state: HappyState())
+    }
+    
+    override func react(action: Action, state: State) -> Observable<Reaction> {
+        let error = NSError(domain: "TestDomain", code: 3, userInfo: nil)
+        return .error(error)
+    }
+    
+    override func reduce(mutation: Mutation, state: State) -> State {
+        return state
+    }
+}
