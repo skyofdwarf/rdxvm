@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4232CBCD2791BDBE00168DE5 /* Reduxift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4232CBC42791BDBD00168DE5 /* Reduxift.framework */; };
+		09C0CC41E509083111C87FE4 /* Pods_RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */; };
+		3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */; };
+		4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4232CBC42791BDBD00168DE5 /* RDXVM.framework */; };
 		42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3AF2795760200BA84AA /* StateDriver.swift */; };
 		42E5A3B62795760200BA84AA /* Driving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B02795760200BA84AA /* Driving.swift */; };
 		42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B12795760200BA84AA /* ViewModel.swift */; };
 		42E5A3B82795760200BA84AA /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B22795760200BA84AA /* Middleware.swift */; };
-		42E5A3B92795760200BA84AA /* Reduxift.h in Headers */ = {isa = PBXBuildFile; fileRef = 42E5A3B32795760200BA84AA /* Reduxift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		42E5A3B92795760200BA84AA /* RDXVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 42E5A3B32795760200BA84AA /* RDXVM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42E5A3BA2795760200BA84AA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B42795760200BA84AA /* Types.swift */; };
 		42E5A3C22795760900BA84AA /* Middlewares.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BC2795760900BA84AA /* Middlewares.swift */; };
 		42E5A3C32795760900BA84AA /* TestViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BD2795760900BA84AA /* TestViewModels.swift */; };
 		42E5A3C42795760900BA84AA /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */; };
-		42E5A3C52795760900BA84AA /* ReduxiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C02795760900BA84AA /* ReduxiftTests.swift */; };
+		42E5A3C52795760900BA84AA /* RDXVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C02795760900BA84AA /* RDXVMTests.swift */; };
 		42E5A3C62795760900BA84AA /* TestTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C12795760900BA84AA /* TestTypes.swift */; };
-		596A44ED0620C7C244146121 /* Pods_Reduxift_ReduxiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D2580EF0221E443D9C73D7 /* Pods_Reduxift_ReduxiftTests.framework */; };
-		64968FFF6838FEA0ED764FFC /* Pods_Reduxift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA6E42D22BB8B8668341B5C /* Pods_Reduxift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,25 +34,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		31D2580EF0221E443D9C73D7 /* Pods_Reduxift_ReduxiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Reduxift_ReduxiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		21CD935161C4240BC53FA096 /* Pods-RDXVM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.debug.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.debug.xcconfig"; sourceTree = "<group>"; };
 		336B81F4CFE29479660691F7 /* Pods-Reduxift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.debug.xcconfig"; sourceTree = "<group>"; };
-		4232CBC42791BDBD00168DE5 /* Reduxift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Reduxift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4232CBCC2791BDBE00168DE5 /* ReduxiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReduxiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4232CBC42791BDBD00168DE5 /* RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RDXVMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		42E5A3AF2795760200BA84AA /* StateDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateDriver.swift; sourceTree = "<group>"; };
 		42E5A3B02795760200BA84AA /* Driving.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driving.swift; sourceTree = "<group>"; };
 		42E5A3B12795760200BA84AA /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		42E5A3B22795760200BA84AA /* Middleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middleware.swift; sourceTree = "<group>"; };
-		42E5A3B32795760200BA84AA /* Reduxift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reduxift.h; sourceTree = "<group>"; };
+		42E5A3B32795760200BA84AA /* RDXVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDXVM.h; sourceTree = "<group>"; };
 		42E5A3B42795760200BA84AA /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		42E5A3BC2795760900BA84AA /* Middlewares.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middlewares.swift; sourceTree = "<group>"; };
 		42E5A3BD2795760900BA84AA /* TestViewModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewModels.swift; sourceTree = "<group>"; };
 		42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
-		42E5A3C02795760900BA84AA /* ReduxiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReduxiftTests.swift; sourceTree = "<group>"; };
+		42E5A3C02795760900BA84AA /* RDXVMTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RDXVMTests.swift; sourceTree = "<group>"; };
 		42E5A3C12795760900BA84AA /* TestTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypes.swift; sourceTree = "<group>"; };
+		6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RDXVM_RDXVMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.release.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.release.xcconfig"; sourceTree = "<group>"; };
+		73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.release.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.release.xcconfig"; sourceTree = "<group>"; };
+		8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.debug.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.release.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.release.xcconfig"; sourceTree = "<group>"; };
 		DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.debug.xcconfig"; sourceTree = "<group>"; };
-		FCA6E42D22BB8B8668341B5C /* Pods_Reduxift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Reduxift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCC62059418764978D604F71 /* Pods-RDXVM-RDXVMTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.release.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.release.xcconfig"; sourceTree = "<group>"; };
+		E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64968FFF6838FEA0ED764FFC /* Pods_Reduxift.framework in Frameworks */,
+				09C0CC41E509083111C87FE4 /* Pods_RDXVM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,8 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4232CBCD2791BDBE00168DE5 /* Reduxift.framework in Frameworks */,
-				596A44ED0620C7C244146121 /* Pods_Reduxift_ReduxiftTests.framework in Frameworks */,
+				4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */,
+				3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +87,10 @@
 				AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */,
 				DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */,
 				72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */,
+				21CD935161C4240BC53FA096 /* Pods-RDXVM.debug.xcconfig */,
+				73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */,
+				8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */,
+				DCC62059418764978D604F71 /* Pods-RDXVM-RDXVMTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -90,8 +98,8 @@
 		4232CBBA2791BDBD00168DE5 = {
 			isa = PBXGroup;
 			children = (
-				42E5A3AE2795760200BA84AA /* Reduxift */,
-				42E5A3BB2795760900BA84AA /* ReduxiftTests */,
+				42E5A3AE2795760200BA84AA /* RDXVM */,
+				42E5A3BB2795760900BA84AA /* RDXVMTests */,
 				4232CBC52791BDBD00168DE5 /* Products */,
 				1692652114B6B09C4F5A54A8 /* Pods */,
 				E9D6B214F65E247B17B1408D /* Frameworks */,
@@ -101,27 +109,27 @@
 		4232CBC52791BDBD00168DE5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4232CBC42791BDBD00168DE5 /* Reduxift.framework */,
-				4232CBCC2791BDBE00168DE5 /* ReduxiftTests.xctest */,
+				4232CBC42791BDBD00168DE5 /* RDXVM.framework */,
+				4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		42E5A3AE2795760200BA84AA /* Reduxift */ = {
+		42E5A3AE2795760200BA84AA /* RDXVM */ = {
 			isa = PBXGroup;
 			children = (
-				42E5A3B32795760200BA84AA /* Reduxift.h */,
+				42E5A3B32795760200BA84AA /* RDXVM.h */,
 				42E5A3B42795760200BA84AA /* Types.swift */,
 				42E5A3AF2795760200BA84AA /* StateDriver.swift */,
 				42E5A3B02795760200BA84AA /* Driving.swift */,
 				42E5A3B12795760200BA84AA /* ViewModel.swift */,
 				42E5A3B22795760200BA84AA /* Middleware.swift */,
 			);
-			name = Reduxift;
-			path = Sources/Reduxift;
+			name = RDXVM;
+			path = Sources/RDXVM;
 			sourceTree = "<group>";
 		};
-		42E5A3BB2795760900BA84AA /* ReduxiftTests */ = {
+		42E5A3BB2795760900BA84AA /* RDXVMTests */ = {
 			isa = PBXGroup;
 			children = (
 				42E5A3C72795764800BA84AA /* Tests */,
@@ -130,8 +138,8 @@
 				42E5A3BC2795760900BA84AA /* Middlewares.swift */,
 				42E5A3BD2795760900BA84AA /* TestViewModels.swift */,
 			);
-			name = ReduxiftTests;
-			path = Tests/ReduxiftTests;
+			name = RDXVMTests;
+			path = Tests/RDXVMTests;
 			sourceTree = "<group>";
 		};
 		42E5A3BE2795760900BA84AA /* Extensions */ = {
@@ -145,7 +153,7 @@
 		42E5A3C72795764800BA84AA /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				42E5A3C02795760900BA84AA /* ReduxiftTests.swift */,
+				42E5A3C02795760900BA84AA /* RDXVMTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -153,8 +161,8 @@
 		E9D6B214F65E247B17B1408D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FCA6E42D22BB8B8668341B5C /* Pods_Reduxift.framework */,
-				31D2580EF0221E443D9C73D7 /* Pods_Reduxift_ReduxiftTests.framework */,
+				E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */,
+				6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -166,16 +174,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42E5A3B92795760200BA84AA /* Reduxift.h in Headers */,
+				42E5A3B92795760200BA84AA /* RDXVM.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		4232CBC32791BDBD00168DE5 /* Reduxift */ = {
+		4232CBC32791BDBD00168DE5 /* RDXVM */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4232CBD62791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "Reduxift" */;
+			buildConfigurationList = 4232CBD62791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "RDXVM" */;
 			buildPhases = (
 				30D80950EAD905741ED79F88 /* [CP] Check Pods Manifest.lock */,
 				4232CBBF2791BDBD00168DE5 /* Headers */,
@@ -187,14 +195,14 @@
 			);
 			dependencies = (
 			);
-			name = Reduxift;
+			name = RDXVM;
 			productName = Reduxift;
-			productReference = 4232CBC42791BDBD00168DE5 /* Reduxift.framework */;
+			productReference = 4232CBC42791BDBD00168DE5 /* RDXVM.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4232CBCB2791BDBE00168DE5 /* ReduxiftTests */ = {
+		4232CBCB2791BDBE00168DE5 /* RDXVMTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4232CBD92791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "ReduxiftTests" */;
+			buildConfigurationList = 4232CBD92791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "RDXVMTests" */;
 			buildPhases = (
 				B4EC860B4559D29CAA4DC869 /* [CP] Check Pods Manifest.lock */,
 				4232CBC82791BDBE00168DE5 /* Sources */,
@@ -207,9 +215,9 @@
 			dependencies = (
 				4232CBCF2791BDBE00168DE5 /* PBXTargetDependency */,
 			);
-			name = ReduxiftTests;
+			name = RDXVMTests;
 			productName = ReduxiftTests;
-			productReference = 4232CBCC2791BDBE00168DE5 /* ReduxiftTests.xctest */;
+			productReference = 4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -231,7 +239,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4232CBBE2791BDBD00168DE5 /* Build configuration list for PBXProject "Reduxift" */;
+			buildConfigurationList = 4232CBBE2791BDBD00168DE5 /* Build configuration list for PBXProject "RDXVM" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -244,8 +252,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4232CBC32791BDBD00168DE5 /* Reduxift */,
-				4232CBCB2791BDBE00168DE5 /* ReduxiftTests */,
+				4232CBC32791BDBD00168DE5 /* RDXVM */,
+				4232CBCB2791BDBE00168DE5 /* RDXVMTests */,
 			);
 		};
 /* End PBXProject section */
@@ -283,7 +291,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Reduxift-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-RDXVM-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -296,15 +304,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B4EC860B4559D29CAA4DC869 /* [CP] Check Pods Manifest.lock */ = {
@@ -322,7 +330,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Reduxift-ReduxiftTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-RDXVM-RDXVMTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -348,7 +356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42E5A3C52795760900BA84AA /* ReduxiftTests.swift in Sources */,
+				42E5A3C52795760900BA84AA /* RDXVMTests.swift in Sources */,
 				42E5A3C32795760900BA84AA /* TestViewModels.swift in Sources */,
 				42E5A3C42795760900BA84AA /* Observable+Extensions.swift in Sources */,
 				42E5A3C22795760900BA84AA /* Middlewares.swift in Sources */,
@@ -361,7 +369,7 @@
 /* Begin PBXTargetDependency section */
 		4232CBCF2791BDBE00168DE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4232CBC32791BDBD00168DE5 /* Reduxift */;
+			target = 4232CBC32791BDBD00168DE5 /* RDXVM */;
 			targetProxy = 4232CBCE2791BDBE00168DE5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -491,7 +499,7 @@
 		};
 		4232CBD72791BDBE00168DE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 336B81F4CFE29479660691F7 /* Pods-Reduxift.debug.xcconfig */;
+			baseConfigurationReference = 21CD935161C4240BC53FA096 /* Pods-RDXVM.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -510,7 +518,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.Reduxift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.rdxvm;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -523,7 +531,7 @@
 		};
 		4232CBD82791BDBE00168DE5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */;
+			baseConfigurationReference = 73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -542,7 +550,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.Reduxift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.rdxvm;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -554,14 +562,14 @@
 		};
 		4232CBDA2791BDBE00168DE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */;
+			baseConfigurationReference = 8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.ReduxiftTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.RDXVMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -571,14 +579,14 @@
 		};
 		4232CBDB2791BDBE00168DE5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */;
+			baseConfigurationReference = DCC62059418764978D604F71 /* Pods-RDXVM-RDXVMTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.ReduxiftTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skyofdwarf.RDXVMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -589,7 +597,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4232CBBE2791BDBD00168DE5 /* Build configuration list for PBXProject "Reduxift" */ = {
+		4232CBBE2791BDBD00168DE5 /* Build configuration list for PBXProject "RDXVM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4232CBD42791BDBE00168DE5 /* Debug */,
@@ -598,7 +606,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4232CBD62791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "Reduxift" */ = {
+		4232CBD62791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "RDXVM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4232CBD72791BDBE00168DE5 /* Debug */,
@@ -607,7 +615,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4232CBD92791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "ReduxiftTests" */ = {
+		4232CBD92791BDBE00168DE5 /* Build configuration list for PBXNativeTarget "RDXVMTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4232CBDA2791BDBE00168DE5 /* Debug */,

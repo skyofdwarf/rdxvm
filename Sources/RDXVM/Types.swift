@@ -1,6 +1,6 @@
 //
 //  ViewModelTypes.swift
-//  Reduxift
+//  RDXVM
 //
 //  Created by YEONGJUNG KIM on 2022/01/16.
 //

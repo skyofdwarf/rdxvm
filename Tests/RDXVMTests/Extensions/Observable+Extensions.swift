@@ -1,6 +1,6 @@
 //
 //  Observable+Extensions.swift
-//  ReduxiftTests
+//  RDXVMTests
 //
 //  Created by YEONGJUNG KIM on 2022/01/16.
 //

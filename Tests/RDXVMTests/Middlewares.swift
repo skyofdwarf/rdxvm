@@ -1,12 +1,12 @@
 //
 //  Middlewares.swift
-//  ReduxiftTests
+//  RDXVMTests
 //
 //  Created by YEONGJUNG KIM on 2022/01/15.
 //
 
 import Foundation
-@testable import Reduxift
+@testable import RDXVM
 
 // MARK: Action loggers
 

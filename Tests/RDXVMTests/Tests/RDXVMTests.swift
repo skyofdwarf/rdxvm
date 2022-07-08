@@ -1,6 +1,6 @@
 //
-//  ReduxiftTests.swift
-//  ReduxiftTests
+//  RDXVMTests.swift
+//  RDXVMTests
 //
 //  Created by YEONGJUNG KIM on 2022/01/14.
 //
@@ -8,9 +8,9 @@
 import XCTest
 import RxSwift
 import RxRelay
-@testable import Reduxift
+@testable import RDXVM
 
-class ReduxiftTests: XCTestCase {
+class RDXVMTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

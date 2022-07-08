@@ -1,9 +1,9 @@
-# Reduxift
+# RDXVM
 
-[![CI Status](https://img.shields.io/travis/skyofdwarf/Reduxift.svg?style=flat)](https://travis-ci.org/skyofdwarf/Reduxift)
-[![Version](https://img.shields.io/cocoapods/v/Reduxift.svg?style=flat)](https://cocoapods.org/pods/Reduxift)
-[![License](https://img.shields.io/cocoapods/l/Reduxift.svg?style=flat)](https://cocoapods.org/pods/Reduxift)
-[![Platform](https://img.shields.io/cocoapods/p/Reduxift.svg?style=flat)](https://cocoapods.org/pods/Reduxift)
+[![CI Status](https://img.shields.io/travis/skyofdwarf/rdxvm.svg?style=flat)](https://travis-ci.org/skyofdwarf/rdxvm)
+[![Version](https://img.shields.io/cocoapods/v/rdxvm.svg?style=flat)](https://cocoapods.org/pods/rdxvm)
+[![License](https://img.shields.io/cocoapods/l/rdxvm.svg?style=flat)](https://cocoapods.org/pods/rdxvm)
+[![Platform](https://img.shields.io/cocoapods/p/rdxvm.svg?style=flat)](https://cocoapods.org/pods/rdxvm)
 
 ## Example
 
@@ -13,11 +13,11 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-Reduxift is available through [CocoaPods](https://cocoapods.org). To install
+RDXVM is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'Reduxift'
+pod 'RDXVM'
 ```
 
 ## Author
@@ -26,4 +26,4 @@ skyofdwarf, skyofdwarf@gmail.com
 
 ## License
 
-Reduxift is available under the MIT license. See the LICENSE file for more info.
+RDXVM is available under the MIT license. See the LICENSE file for more info.

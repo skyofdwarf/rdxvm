@@ -1,12 +1,12 @@
 //
 //  TestTypes.swift
-//  ReduxiftTests
+//  RDXVMTests
 //
 //  Created by YEONGJUNG KIM on 2022/01/14.
 //
 
 import Foundation
-@testable import Reduxift
+@testable import RDXVM
 
 enum Game {
     case lol, sc, wow

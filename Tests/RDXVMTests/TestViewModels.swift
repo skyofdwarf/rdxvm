@@ -1,6 +1,6 @@
 //
 //  TestViewModels.swift
-//  ReduxiftTests
+//  RDXVMTests
 //
 //  Created by YEONGJUNG KIM on 2022/01/16.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-@testable import Reduxift
+@testable import RDXVM
 
 struct Dependency {
     var games: [Game]
