@@ -88,7 +88,7 @@ class RDXVMTests: XCTestCase {
     }
     
     func test_state_drive() throws {
-        var db = DisposeBag()
+        let db = DisposeBag()
         
         let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
         let state = HappyState(lastMessage: nil,
@@ -238,7 +238,7 @@ class RDXVMTests: XCTestCase {
     }
     
     func test_driving_state_drive() throws {
-        var db = DisposeBag()
+        let db = DisposeBag()
         
         let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
         let state = DrivingHappyState(lastMessage: nil,
@@ -283,7 +283,7 @@ class RDXVMTests: XCTestCase {
     }
     
     func test_driving_state_event() throws {
-        var db = DisposeBag()
+        let db = DisposeBag()
         
         let dependency = Dependency(games: [.lol, .wow], fruits: [.apple, .cherry])
         let state = DrivingHappyState(lastMessage: nil,

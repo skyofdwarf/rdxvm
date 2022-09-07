@@ -77,7 +77,7 @@ struct DrivingHappyState: ViewModelState, Equatable {
 extension DrivingHappyState: CustomDebugStringConvertible {
     var debugDescription: String {
         """
-        STATE(\(count)): \(lastMessage), \(status), \(games), \(fruits)
+        STATE(\(count)): \(String(describing: lastMessage)), \(status), \(games), \(fruits)
         """
     }
 }

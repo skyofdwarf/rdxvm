@@ -42,7 +42,7 @@ func mutation_logger_nontyped<State: ViewModelState, Mutation: ViewModelMutation
         
         print("[\(tag)] AFTER: \(mutation)")
         
-        return mutation
+        return a
     }
 }
 
