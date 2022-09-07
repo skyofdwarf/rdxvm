@@ -193,7 +193,7 @@ open class ViewModel<Action: ViewModelAction,
     ///   - state: current state
     /// - Returns: an observable of reactions
     open func react(action: Action, state: State) -> Observable<Reaction> {
-        fatalError("Override this method to use ViewModel")
+        .empty()
     }
     
     /// State reducer method.
