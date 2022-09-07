@@ -58,8 +58,8 @@ func event_logger_nontyped<State: ViewModelState, Event: ViewModelEvent>(_ tag: 
     }
 }
 
-func state_logger_nontyped<State: ViewModelState>(_ tag: String) -> StateMiddleware<State> {
-    nontyped_state_middleware { state, next in
+func state_logger_nontyped<State: ViewModelState>(_ tag: String) -> StatePostware<State> {
+    nontyped_state_postware { state, next in
         
         print("[\(tag)] BEFORE: \(state)")
         
@@ -97,8 +97,8 @@ func event_logger_typed(_ tag: String) -> StateViewModel.EventMiddleware {
     }
 }
 
-func state_logger_typed(_ tag: String) -> StateViewModel.StateMiddleware {
-    StateViewModel.middleware.state { state, next in
+func state_logger_typed(_ tag: String) -> StateViewModel.StatePostware {
+    StateViewModel.postware.state { state, next in
         
         print("[\(tag)] BEFORE: \(state)")
 

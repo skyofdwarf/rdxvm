@@ -22,14 +22,14 @@ final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
          actionMiddlewares: [ActionMiddleware] = [],
          mutationMiddlewares: [MutationMiddleware] = [],
          eventMiddlewares: [EventMiddleware] = [],
-         stateMiddlewares: [StateMiddleware] = [])
+         statePostwares: [StatePostware] = [])
     {
         self.dependency = dependency
         super.init(state: initialState,
                    actionMiddlewares: actionMiddlewares,
                    mutationMiddlewares: mutationMiddlewares,
                    eventMiddlewares: eventMiddlewares,
-                   stateMiddlewares: stateMiddlewares)
+                   statePostwares: statePostwares)
     }
     
     override func react(action: Action, state: State) -> Observable<Reaction> {

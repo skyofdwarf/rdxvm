@@ -12,8 +12,8 @@ public typealias GetState<State: ViewModelState> = () -> State
 public typealias MiddlewareTranducer<T> = (@escaping Dispatch<T>) -> Dispatch<T>
 public typealias Dispatch<T> = (T) -> T
 
-public typealias StateMiddleware<State: ViewModelState> = StateMiddlewareTranducer<State>//() -> StateMiddlewareTranducer<State>
-public typealias StateMiddlewareTranducer<State: ViewModelState> = (@escaping Dispatch<State>) -> Dispatch<State>
+public typealias StatePostware<State: ViewModelState> = StatePostwareTranducer<State>//() -> StatePostwareTranducer<State>
+public typealias StatePostwareTranducer<State: ViewModelState> = (@escaping Dispatch<State>) -> Dispatch<State>
 
 /// Use this method to create a non-typed middleware
 /// - Parameter process: middleware logic
@@ -56,7 +56,7 @@ public func nontyped_middleware<State: ViewModelState, T>(_ process: @escaping (
     }
 }
 
-public func nontyped_state_middleware<State: ViewModelState>(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware<State> {
+public func nontyped_state_postware<State: ViewModelState>(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StatePostware<State> {
     { next in
         { state in
             // do ...

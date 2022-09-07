@@ -32,8 +32,8 @@ open class ViewModel<Action: ViewModelAction,
     public typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
     public typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
     
-    public typealias StateMiddleware = StateMiddlewareTranducer//() -> StateMiddlewareTranducer
-    public typealias StateMiddlewareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
+    public typealias StatePostware = StatePostwareTranducer//() -> StatePostwareTranducer
+    public typealias StatePostwareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
         
     /// Reaction is side-effect of Action
     public enum Reaction {
@@ -61,8 +61,12 @@ open class ViewModel<Action: ViewModelAction,
         public func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
             nontyped_middleware(process)
         }
-        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StateMiddleware {
-            nontyped_state_middleware(process)
+    }
+    
+    /// Postware helper type
+    public struct PostwareGenerator {
+        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StatePostware {
+            nontyped_state_postware(process)
         }
     }
     
@@ -70,6 +74,9 @@ open class ViewModel<Action: ViewModelAction,
 
     /// Middleware generator
     public static var middleware: MiddlewareGenerator { MiddlewareGenerator() }
+    
+    /// Postware generator
+    public static var postware: PostwareGenerator { PostwareGenerator() }
     
     // Action
     public var action: Binder<Action> {
@@ -118,7 +125,7 @@ open class ViewModel<Action: ViewModelAction,
                 actionMiddlewares: [ActionMiddleware] = [],
                 mutationMiddlewares: [MutationMiddleware] = [],
                 eventMiddlewares: [EventMiddleware] = [],
-                stateMiddlewares: [StateMiddleware] = [])
+                statePostwares: [StatePostware] = [])
     {
         // state
         stateRelay = BehaviorRelay<State>(value: initialState)
@@ -126,7 +133,7 @@ open class ViewModel<Action: ViewModelAction,
         let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, stateRelay)
         let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, stateRelay)
         let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, stateRelay)
-        let statePostMiddleware = Self.statePostMiddleware(stateMiddlewares)
+        let statePostware = Self.statePostware(statePostwares)
         
         // middleware(raw action) -> action
         userActionRelay
@@ -171,7 +178,7 @@ open class ViewModel<Action: ViewModelAction,
                 guard let self = self else { return state }
                 return self.reduce(mutation: mutation, state: state)
             }
-            .flatMap { statePostMiddleware($0) }
+            .flatMap { statePostware($0) }
             .bind(to: stateRelay)
             .disposed(by: db)
     }
@@ -222,10 +229,10 @@ open class ViewModel<Action: ViewModelAction,
     /// Makes post-middleware stack for state.
     /// - Parameter middlewares: state middlewares
     /// - Returns: A state middleware stack function
-    private static func statePostMiddleware(_ middlewares: [StateMiddleware]) -> (State) -> Observable<State> {
+    private static func statePostware(_ postwares: [StatePostware]) -> (State) -> Observable<State> {
         let rawState: Dispatch<State> = { $0 }
         
-        let f: Dispatch<State> = middlewares.reversed().reduce(rawState) { mwStack, mw in
+        let f: Dispatch<State> = postwares.reversed().reduce(rawState) { mwStack, mw in
             return mw(mwStack)
         }
                 
