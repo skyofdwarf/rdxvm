@@ -142,12 +142,16 @@ open class ViewModel<Action: ViewModelAction,
         let statePostware = Self.statePostware(statePostwares)
         
         // middleware(raw action | reaction.action) -> action
-        Observable<Action>.merge([userActionRelay.asObservable(), reactionRelay.compactMap { $0.action }])
-            .subscribe(onNext: {
-                _ = dispatchAction($0)
-            })
-            .disposed(by: db)
-
+        Observable<Action>.merge([
+            userActionRelay.asObservable(),
+            reactionRelay.compactMap{ $0.action }
+                .observe(on: MainScheduler.asyncInstance) /* prevent reentrancy */
+        ])
+        .subscribe(onNext: {
+            _ = dispatchAction($0)
+        })
+        .disposed(by: db)
+        
         // react(action) -> reaction
         actionRelay
             .withLatestFrom(stateRelay) { ($0, $1) }
