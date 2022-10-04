@@ -35,7 +35,8 @@ final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
     override func react(action: Action, state: State) -> Observable<Reaction> {
         switch action {
         case .wakeup:
-            return .just(.mutation(.ready(dependency.games, dependency.fruits)))
+            return .of(.mutation(.status(.idle)),
+                       .mutation(.ready(dependency.games, dependency.fruits)))
             
         case .play(let game):
             return .from([ .mutation(.status(.playing(game))),
@@ -46,6 +47,10 @@ final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
             
         case .shout(let message):
             return .just(.mutation(.lastMessage(message)))
+            
+        case .sleep(let seconds):
+            return .just(.action(.wakeup)).delay(.seconds(seconds), scheduler: MainScheduler.asyncInstance)
+                .startWith(.mutation(.status(.sleeping)))
         }
     }
     
@@ -80,7 +85,8 @@ final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, Driving
     override func react(action: Action, state: State) -> Observable<Reaction> {
         switch action {
         case .wakeup:
-            return .just(.mutation(.ready(dependency.games, dependency.fruits)))
+            return .of(.mutation(.status(.idle)),
+                       .mutation(.ready(dependency.games, dependency.fruits)))
             
         case .play(let game):
             return .from([ .mutation(.status(.playing(game))),
@@ -91,6 +97,10 @@ final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, Driving
             
         case .shout(let message):
             return .just(.mutation(.lastMessage(message)))
+        
+        case .sleep(let seconds):
+            return .just(.action(.wakeup)).delay(.seconds(seconds), scheduler: MainScheduler.asyncInstance)
+                .startWith(.mutation(.status(.sleeping)))
         }
     }
     

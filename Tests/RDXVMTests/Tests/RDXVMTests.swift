@@ -41,25 +41,25 @@ class RDXVMTests: XCTestCase {
         actionRelay.accept(.wakeup)
         XCTAssert(vm.state.games == dependency.games)
         XCTAssert(vm.state.fruits == dependency.fruits)
-        XCTAssert(vm.state.count == 1)
+        XCTAssert(vm.state.count == 2)
         
         actionRelay.accept(.play(.wow))
         XCTAssert(vm.state.status == .playing(.wow))
-        XCTAssert(vm.state.count == 2)
+        XCTAssert(vm.state.count == 3)
         
         actionRelay.accept(.eat(.cherry))
         XCTAssert(vm.state.status == .eating(.cherry))
-        XCTAssert(vm.state.count == 3)
+        XCTAssert(vm.state.count == 4)
         
         actionRelay.accept(.eat(.apple))
         XCTAssert(vm.state.status == .eating(.apple))
-        XCTAssert(vm.state.count == 4)
+        XCTAssert(vm.state.count == 5)
         
         let message_rock = "I wanna ROCK !"
                       
         actionRelay.accept(.shout(message_rock))
         XCTAssert(vm.state.lastMessage == message_rock)
-        XCTAssert(vm.state.count == 5)
+        XCTAssert(vm.state.count == 6)
         
         db = DisposeBag()
         
@@ -69,7 +69,7 @@ class RDXVMTests: XCTestCase {
         
         XCTAssert(vm.state.lastMessage != message_hear)
         XCTAssert(vm.state.lastMessage == message_rock)
-        XCTAssert(vm.state.count == 5)
+        XCTAssert(vm.state.count == 6)
         
         actionRelay.bind(to: vm.action)
             .disposed(by: db)
@@ -77,14 +77,14 @@ class RDXVMTests: XCTestCase {
         actionRelay.accept(.shout(message_hear))
         
         XCTAssert(vm.state.lastMessage == message_hear)
-        XCTAssert(vm.state.count == 6)
+        XCTAssert(vm.state.count == 7)
         
         XCTAssertEqual(vm.state.raw,
                        HappyState(lastMessage: message_hear,
                                   status: .eating(.apple),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 6))
+                                  count: 7))
     }
     
     func test_state_drive() throws {
@@ -129,28 +129,28 @@ class RDXVMTests: XCTestCase {
                                   status: .idle,
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 1))
+                                  count: 2))
         
         XCTAssertEqual(expect("play wow", action: .play(.wow)),
                        HappyState(lastMessage: nil,
                                   status: .playing(.wow),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 2))
+                                  count: 3))
         
         XCTAssertEqual(expect("eat cherry", action: .eat(.cherry)),
                        HappyState(lastMessage: nil,
                                   status: .eating(.cherry),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 3))
+                                  count: 4))
         
         XCTAssertEqual(expect("eat apple", action: .eat(.apple)),
                        HappyState(lastMessage: nil,
                                   status: .eating(.apple),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 4))
+                                  count: 5))
         
         let message_rock = "I wanna ROCK !"
         
@@ -160,14 +160,14 @@ class RDXVMTests: XCTestCase {
                                   status: .eating(.apple),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 5))
+                                  count: 6))
         
         XCTAssertEqual(expect("shout rock", action: .shout(message_rock)),
                        HappyState(lastMessage: message_rock,
                                   status: .eating(.apple),
                                   games: dependency.games,
                                   fruits: dependency.fruits,
-                                  count: 6))
+                                  count: 7))
     }
 
     func test_driving_state() throws {
@@ -191,25 +191,25 @@ class RDXVMTests: XCTestCase {
         actionRelay.accept(.wakeup)
         XCTAssert(vm.state.games == dependency.games)
         XCTAssert(vm.state.fruits == dependency.fruits)
-        XCTAssertEqual(vm.state.count, 1)
+        XCTAssertEqual(vm.state.count, 2 /* status, ready */)
 
         actionRelay.accept(.play(.wow))
         XCTAssert(vm.state.status == .playing(.wow))
-        XCTAssertEqual(vm.state.count, 2)
+        XCTAssertEqual(vm.state.count, 3)
 
         actionRelay.accept(.eat(.cherry))
         XCTAssert(vm.state.status == .eating(.cherry))
-        XCTAssertEqual(vm.state.count, 3)
+        XCTAssertEqual(vm.state.count, 4)
 
         actionRelay.accept(.eat(.apple))
         XCTAssert(vm.state.status == .eating(.apple))
-        XCTAssertEqual(vm.state.count, 4)
+        XCTAssertEqual(vm.state.count, 5)
 
         let message_rock = "I wanna ROCK !"
 
         actionRelay.accept(.shout(message_rock))
         XCTAssert(vm.state.lastMessage == message_rock)
-        XCTAssertEqual(vm.state.count, 5)
+        XCTAssertEqual(vm.state.count, 6)
 
         db = DisposeBag()
 
@@ -219,7 +219,7 @@ class RDXVMTests: XCTestCase {
 
         XCTAssert(vm.state.lastMessage != message_hear)
         XCTAssert(vm.state.lastMessage == message_rock)
-        XCTAssertEqual(vm.state.count, 5)
+        XCTAssertEqual(vm.state.count, 6)
 
         actionRelay.bind(to: vm.action)
             .disposed(by: db)
@@ -227,14 +227,14 @@ class RDXVMTests: XCTestCase {
         actionRelay.accept(.shout(message_hear))
 
         XCTAssert(vm.state.lastMessage == message_hear)
-        XCTAssertEqual(vm.state.count, 6)
+        XCTAssertEqual(vm.state.count, 7)
         
         XCTAssertEqual(vm.state.raw,
                        DrivingHappyState(lastMessage: message_hear,
                                          status: .eating(.apple),
                                          games: dependency.games,
                                          fruits: dependency.fruits,
-                                         count: 6))
+                                         count: 7))
     }
     
     func test_driving_state_drive() throws {
@@ -265,8 +265,9 @@ class RDXVMTests: XCTestCase {
         
         vm.state.$status
             .drive(onNext: {
-                XCTAssertEqual($0, .playing(.sc))
-                status.fulfill()
+                if $0 == .playing(.sc) {
+                    status.fulfill()
+                }
             })
             .disposed(by: db)
         
@@ -274,8 +275,9 @@ class RDXVMTests: XCTestCase {
         
         vm.state.$games
             .drive(onNext: {
-                XCTAssertEqual($0, dependency.games)
-                games.fulfill()
+                if $0 == dependency.games {
+                    games.fulfill()
+                }
             })
             .disposed(by: db)
         
@@ -310,6 +312,41 @@ class RDXVMTests: XCTestCase {
         wait(for: [event], timeout: 5)
     }
     
+    func test_action_by_reaction() throws {
+        var rawActionHistory: [HappyAction] = []
+        
+        // nontyped logger
+        let rawActionLogger: Middleware<HappyState, HappyAction> = nontyped_middleware { state, next, action in
+            rawActionHistory.append(action)
+            return next(action)
+        }
+        
+        let dependency = Dependency(games: [.lol, .wow],
+                                    fruits: [.apple, .cherry])
+        let db = DisposeBag()
+        let vm = StateViewModel(dependency: dependency,
+                                state: HappyState(),
+                                actionMiddlewares: [rawActionLogger])
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        XCTAssertEqual(vm.state.status, .idle)
+        
+        actionRelay.accept(.sleep(3))
+        
+        XCTAssertEqual(rawActionHistory.last, .sleep(3))
+        XCTAssertEqual(vm.state.status, .sleeping)
+        
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "wakeup")], timeout: 4.0)
+        
+        XCTAssertEqual(rawActionHistory.last, .wakeup)
+        XCTAssertEqual(vm.state.status, .idle)
+        XCTAssertEqual(vm.state.games, dependency.games)
+        XCTAssertEqual(vm.state.fruits, dependency.fruits)
+    }
+    
     func test_action_logger() throws {
         var rawActionHistory: [HappyAction] = []
         
@@ -335,6 +372,8 @@ class RDXVMTests: XCTestCase {
                 return next(.shout(MSG_EAT))
             case .shout(let msg):
                 return next(.shout(msg))
+            case .sleep(let seconds):
+                return next(.sleep(seconds))
             }
         }
         

@@ -37,8 +37,14 @@ open class ViewModel<Action: ViewModelAction,
         
     /// Reaction is side-effect of Action
     public enum Reaction {
+        case action(Action)
         case mutation(Mutation)
         case event(Event)
+        
+        var action: Action? {
+            guard case let .action(action) = self else { return nil }
+            return action
+        }
         
         var mutation: Mutation? {
             guard case let .mutation(mutation) = self else { return nil }
@@ -78,20 +84,20 @@ open class ViewModel<Action: ViewModelAction,
     /// Postware generator
     public static var postware: PostwareGenerator { PostwareGenerator() }
     
-    // Action
+    // Action input binder
     public var action: Binder<Action> {
         Binder<Action>(self) { base, action in
             base.userActionRelay.accept(action)
         }
     }
     
-    // Error output
+    // Error output signal
     public var error: Signal<Error> { errorRelay.asSignal() }
 
-    // Event output
+    // Event output signal
     public var event: Signal<Event> { eventRelay.asSignal() }
     
-    // State output
+    // State output driver
     public var state: StateDriver<State> { StateDriver(stateRelay) }
 
     // MARK: - Private properties
@@ -135,8 +141,8 @@ open class ViewModel<Action: ViewModelAction,
         let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, stateRelay)
         let statePostware = Self.statePostware(statePostwares)
         
-        // middleware(raw action) -> action
-        userActionRelay
+        // middleware(raw action | reaction.action) -> action
+        Observable<Action>.merge([userActionRelay.asObservable(), reactionRelay.compactMap { $0.action }])
             .subscribe(onNext: {
                 _ = dispatchAction($0)
             })

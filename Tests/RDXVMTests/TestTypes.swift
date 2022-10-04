@@ -20,11 +20,13 @@ enum HappyStatus: Equatable {
     case idle
     case playing(Game)
     case eating(Fruit)
+    case sleeping
 }
 
 // Action
 enum HappyAction: ViewModelAction, Equatable {
     case wakeup
+    case sleep(Int)
     case play(Game)
     case eat(Fruit)
     case shout(String)
