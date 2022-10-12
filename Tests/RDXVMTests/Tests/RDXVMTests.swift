@@ -530,4 +530,29 @@ class RDXVMTests: XCTestCase {
         
         wait(for: [expectation], timeout: 1)
     }
+    
+    func test_transform_mutation() throws {
+        let db = DisposeBag()
+        let vm = DelegatingViewModel()
+        
+        let actionRelay = PublishRelay<HappyAction>()
+        
+        actionRelay.bind(to: vm.action)
+            .disposed(by: db)
+        
+        let expectation = XCTestExpectation(description: "transform_mutation")
+        
+        XCTAssertEqual(vm.state.status, HappyStatus.idle)
+        XCTAssertEqual(vm.state.count, 0)
+        XCTAssertNil(vm.state.lastMessage)
+        
+        actionRelay.accept(.wakeup)
+        actionRelay.accept(.shout("no no"))
+        
+        _ = XCTWaiter.wait(for: [expectation], timeout: 1.0)
+        
+        XCTAssertEqual(vm.state.status, HappyStatus.sleeping)
+        XCTAssertEqual(vm.state.count, 1)
+        XCTAssertNil(vm.state.lastMessage)
+    }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxRelay
 
 @testable import RDXVM
 
@@ -137,5 +138,75 @@ final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
     
     override func reduce(mutation: Mutation, state: State) -> State {
         return state
+    }
+}
+
+final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, DrivingHappyState, HappyEvent> {
+    init() {
+        super.init(state: DrivingHappyState())
+    }
+    
+    override func react(action: Action, state: State) -> Observable<Reaction> {
+        switch action {
+        case .wakeup:
+            return .just(.mutation(.status(.sleeping)))
+        default:
+            return .empty()
+        }
+    }
+    
+    override func reduce(mutation: Mutation, state: State) -> State {
+        var state = state
+        switch mutation {
+        case let .status(status):
+            state.status = status
+            state.count += 1
+        default:
+            break
+        }
+        
+        return state
+    }
+}
+
+final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, DrivingHappyState, HappyEvent> {
+    let delegate = DelegateViewModel()
+    let actionRelay = PublishRelay<DelegateViewModel.Action>()
+    
+    init() {
+        super.init(state: DrivingHappyState())
+        
+        actionRelay
+            .bind(to: delegate.action)
+            .disposed(by: db)
+    }
+    
+    override func react(action: Action, state: State) -> Observable<Reaction> {
+        switch action {
+        case .wakeup:
+            actionRelay.accept(.wakeup)
+        default:
+            break
+        }
+        
+        return .empty()
+    }
+    
+    override func reduce(mutation: Mutation, state: State) -> State {
+        var state = state
+        switch mutation {
+        case let .status(status):
+            state.status = status
+            state.count += 1
+        default:
+            break
+        }
+        
+        return state
+    }
+    
+    override func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        .merge(mutation,
+               delegate.state.$status.map { Mutation.status($0) }.asObservable())
     }
 }
