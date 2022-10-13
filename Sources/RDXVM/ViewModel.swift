@@ -185,10 +185,10 @@ open class ViewModel<Action: ViewModelAction,
             .flatMap { [weak self] (action, state) -> Observable<Reaction> in
                 guard let self else { return .empty() }
                 return self.react(action: action, state: state)
-            }
-            .catch {
-                rawErrorRelay.accept($0)
-                return .empty()
+                    .catch {
+                        rawErrorRelay.accept($0)
+                        return .empty()
+                    }
             }
             .bind(to: reactionRelay)
             .disposed(by: db)
