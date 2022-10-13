@@ -24,7 +24,7 @@ enum HappyStatus: Equatable {
 }
 
 // Action
-enum HappyAction: ViewModelAction, Equatable {
+enum HappyAction: Equatable {
     case wakeup
     case sleep(Int)
     case play(Game)
@@ -33,21 +33,21 @@ enum HappyAction: ViewModelAction, Equatable {
 }
 
 // Mutation
-enum HappyMutation: ViewModelMutation, Equatable {
+enum HappyMutation: Equatable {
     case ready([Game], [Fruit])
     case status(HappyStatus)
     case lastMessage(String?)
 }
 
 // Event
-enum HappyEvent: ViewModelEvent, Equatable {
+enum HappyEvent: Equatable {
     case lotto
     case win(Game)
 }
 
 // Value State
 
-struct HappyState: ViewModelState, Equatable {
+struct HappyState: Equatable {
     var lastMessage: String?
     var status: HappyStatus = .idle
     
@@ -58,7 +58,7 @@ struct HappyState: ViewModelState, Equatable {
 }
 
 // Reference State
-struct DrivingHappyState: ViewModelState, Equatable {
+struct DrivingHappyState: Equatable {
     @Driving var lastMessage: String?
     @Driving var status: HappyStatus = .idle
     

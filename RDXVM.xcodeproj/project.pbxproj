@@ -15,7 +15,6 @@
 		42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B12795760200BA84AA /* ViewModel.swift */; };
 		42E5A3B82795760200BA84AA /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B22795760200BA84AA /* Middleware.swift */; };
 		42E5A3B92795760200BA84AA /* RDXVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 42E5A3B32795760200BA84AA /* RDXVM.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		42E5A3BA2795760200BA84AA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B42795760200BA84AA /* Types.swift */; };
 		42E5A3C22795760900BA84AA /* Middlewares.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BC2795760900BA84AA /* Middlewares.swift */; };
 		42E5A3C32795760900BA84AA /* TestViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BD2795760900BA84AA /* TestViewModels.swift */; };
 		42E5A3C42795760900BA84AA /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */; };
@@ -43,7 +42,6 @@
 		42E5A3B12795760200BA84AA /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		42E5A3B22795760200BA84AA /* Middleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middleware.swift; sourceTree = "<group>"; };
 		42E5A3B32795760200BA84AA /* RDXVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDXVM.h; sourceTree = "<group>"; };
-		42E5A3B42795760200BA84AA /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		42E5A3BC2795760900BA84AA /* Middlewares.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middlewares.swift; sourceTree = "<group>"; };
 		42E5A3BD2795760900BA84AA /* TestViewModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewModels.swift; sourceTree = "<group>"; };
 		42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
@@ -119,7 +117,6 @@
 			isa = PBXGroup;
 			children = (
 				42E5A3B32795760200BA84AA /* RDXVM.h */,
-				42E5A3B42795760200BA84AA /* Types.swift */,
 				42E5A3AF2795760200BA84AA /* StateDriver.swift */,
 				42E5A3B02795760200BA84AA /* Driving.swift */,
 				42E5A3B12795760200BA84AA /* ViewModel.swift */,
@@ -347,7 +344,6 @@
 				42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */,
 				42E5A3B82795760200BA84AA /* Middleware.swift in Sources */,
 				42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */,
-				42E5A3BA2795760200BA84AA /* Types.swift in Sources */,
 				42E5A3B62795760200BA84AA /* Driving.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

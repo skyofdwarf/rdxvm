@@ -12,11 +12,11 @@ import RxCocoa
 
 /// Redux like ViewModel class.
 ///
-/// Bind actions with `action` property and bind `state`, `event` and `error` properties to get data, evnets and uncached errors.
-open class ViewModel<Action: ViewModelAction,
-                     Mutation: ViewModelMutation,
-                     State: ViewModelState,
-                     Event: ViewModelEvent>
+/// Bind actions with `action` property and bind `state`, `event` and `error` properties to get data, evnets and uncatched or explicit errors.
+open class ViewModel<Action,
+                     Mutation,
+                     State,
+                     Event>
 {
     public typealias Action = Action
     public typealias Mutation = Mutation

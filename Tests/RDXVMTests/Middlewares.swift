@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Action loggers
 
-func action_logger_nontyped<State: ViewModelState, Action: ViewModelAction>(_ tag: String) -> Middleware<State, Action> {
+func action_logger_nontyped<State, Action>(_ tag: String) -> Middleware<State, Action> {
     nontyped_middleware { state, next, action in
         print("[\(tag)] BEFORE: \(action)")
         
@@ -34,7 +34,7 @@ func action_logger_typed(_ tag: String) -> StateViewModel.ActionMiddleware {
     }
 }
 
-func mutation_logger_nontyped<State: ViewModelState, Mutation: ViewModelMutation>(_ tag: String) -> Middleware<State, Mutation> {
+func mutation_logger_nontyped<State, Mutation>(_ tag: String) -> Middleware<State, Mutation> {
     nontyped_middleware { state, next, mutation in
         print("[\(tag)] BEFORE: \(mutation)")
         
@@ -46,7 +46,7 @@ func mutation_logger_nontyped<State: ViewModelState, Mutation: ViewModelMutation
     }
 }
 
-func event_logger_nontyped<State: ViewModelState, Event: ViewModelEvent>(_ tag: String) -> Middleware<State, Event> {
+func event_logger_nontyped<State, Event>(_ tag: String) -> Middleware<State, Event> {
     nontyped_middleware { state, next, event in
         print("[\(tag)] BEFORE: \(event)")
         
@@ -58,7 +58,7 @@ func event_logger_nontyped<State: ViewModelState, Event: ViewModelEvent>(_ tag: 
     }
 }
 
-func state_logger_nontyped<State: ViewModelState>(_ tag: String) -> StatePostware<State> {
+func state_logger_nontyped<State>(_ tag: String) -> StatePostware<State> {
     nontyped_state_postware { state, next in
         
         print("[\(tag)] BEFORE: \(state)")

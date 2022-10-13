@@ -16,7 +16,7 @@ import RxCocoa
 ///
 /// 1. To get a new state, drive this directly.
 ///     ```
-///     struct State: ViewModelState {
+///     struct State {
 ///         let foo = 0
 ///         let bar = 1
 ///     }
@@ -29,7 +29,7 @@ import RxCocoa
 ///
 /// 2. To get new values per property, drive @Driving property.
 ///     ```
-///     struct State: ViewModelState {
+///     struct State {
 ///         @Driving var foo = 0
 ///         @Driving var bar = 1
 ///     }
@@ -42,7 +42,7 @@ import RxCocoa
 /// You can also get current value by accessing normal property.
 ///
 ///     ```
-///     struct State: ViewModelState {
+///     struct State {
 ///         @Driving var foo = 0
 ///         let bar = 1
 ///     }
@@ -50,7 +50,7 @@ import RxCocoa
 ///     print(vm.state.bar)
 ///     ```
 @dynamicMemberLookup
-public struct StateDriver<State: ViewModelState> {
+public struct StateDriver<State> {
     private let relay: BehaviorRelay<State>
     public init (_ relay: BehaviorRelay<State>) { self.relay = relay }
     
