@@ -15,88 +15,33 @@ import RxCocoa
 /// Bind actions with `action` property and bind `state`, `event` and `error` properties to get data, evnets and uncatched or explicit errors.
 open class ViewModel<Action,
                      Mutation,
-                     State,
-                     Event>
+                     Event,
+                     State>
 {
+    // MARK: - Types
+    
     public typealias Action = Action
     public typealias Mutation = Mutation
-    public typealias State = State
     public typealias Event = Event
+    public typealias State = State    
     
-    public typealias ActionMiddleware = Middleware<Action>
-    public typealias MutationMiddleware = Middleware<Mutation>
-    public typealias EventMiddleware = Middleware<Event>
-    public typealias ErrorMiddleware = Middleware<Error>
-    
-    public typealias GetState = () -> State
-    public typealias Dispatch<What> = (What) -> What
-    public typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
-    public typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
-    
-    public typealias StatePostware = StatePostwareTranducer//() -> StatePostwareTranducer
-    public typealias StatePostwareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
-    
-    /// Reaction is side-effect of Action
+    /// Reaction is a response or side-effect of an action
+    ///
+    /// - Note: Reaction.action is scheduled next runloop to prevent reentrancy to reacting process(Rx reentrancy)
     public enum Reaction {
         case action(Action)
         case mutation(Mutation)
         case event(Event)
         case error(Error)
-        
-        var action: Action? {
-            guard case let .action(action) = self else { return nil }
-            return action
-        }
-        var mutation: Mutation? {
-            guard case let .mutation(mutation) = self else { return nil }
-            return mutation
-        }
-        var event: Event? {
-            guard case let .event(event) = self else { return nil }
-            return event
-        }
-        var error: Error? {
-            guard case let .error(error) = self else { return nil }
-            return error
-        }
     }
     
-    /// Middleware helper type
-    public struct MiddlewareGenerator {
-        public func action(_ process: @escaping (_ state: GetState, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
-            nontyped_middleware(process)
-        }
-        public func mutation(_ process: @escaping (_ state: GetState, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
-            nontyped_middleware(process)
-        }
-        public func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
-            nontyped_middleware(process)
-        }
-        public func error(_ process: @escaping (_ state: GetState, _ next: Dispatch<Error>, _ error: Error) -> Error) -> Middleware<Error> {
-            nontyped_middleware(process)
-        }
-    }
+    // MARK: - Input
     
-    /// Postware helper type
-    public struct PostwareGenerator {
-        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StatePostware {
-            nontyped_state_postware(process)
-        }
-    }
-    
-    // MARK: - Interfaces
-
-    /// Middleware generator
-    public static var middleware: MiddlewareGenerator { MiddlewareGenerator() }
-    
-    /// Postware generator
-    public static var postware: PostwareGenerator { PostwareGenerator() }
-
     /// Action input function
     public func send(action: Action) {
         userActionRelay.accept(action)
     }
-
+    
     /// Action input binder, use it to send an action in RX way
     public var action: Binder<Action> {
         Binder<Action>(self) { base, action in
@@ -104,24 +49,24 @@ open class ViewModel<Action,
         }
     }
     
+    // MARK: - Output
+    
     /// Error output signal
     public var error: Signal<Error> { errorRelay.asSignal() }
-
+    
     /// Event output signal
     public var event: Signal<Event> { eventRelay.asSignal() }
     
     /// State drivable output
     public var state: StateDriver<State> { StateDriver(stateRelay) }
-
+    
     // MARK: - Private properties
     
     private(set) var db = DisposeBag()
     
     fileprivate let userActionRelay = PublishRelay<Action>()
-    
     fileprivate let eventRelay = PublishRelay<Event>()
     fileprivate let errorRelay = PublishRelay<Error>()
-
     fileprivate let stateRelay: BehaviorRelay<State>
     
     deinit {
@@ -132,12 +77,14 @@ open class ViewModel<Action,
     
     // MARK: - Intializer
     
-    /// Initializes a view model with state and middlewares
+    /// Initializes a view model with state, middlewares, and postwares
     /// - Parameters:
     ///   - initialState: initial state
     ///   - actionMiddlewares: action middlewares
     ///   - mutationMiddlewares: mutation middlewares
     ///   - eventMiddlewares: event middlewares
+    ///   - errorMiddlewares: error middlewares
+    ///   - statePostwares: state postwares
     public init(state initialState: State,
                 actionMiddlewares: [ActionMiddleware] = [],
                 mutationMiddlewares: [MutationMiddleware] = [],
@@ -158,7 +105,7 @@ open class ViewModel<Action,
         let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, stateRelay)
         let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, stateRelay)
         let statePostware = Self.statePostware(statePostwares)
-                
+        
         // ACTION: react(middleware(transform(action))) -> reaction
         
         // 1. user action, reaction.action
@@ -225,7 +172,7 @@ open class ViewModel<Action,
             .disposed(by: db)
     }
     
-    // MARK: - Overridable interfaces
+    // MARK: - Reactor
     
     /// Action react method.
     /// You should override this method to map an action to an observable of reactions.
@@ -238,6 +185,8 @@ open class ViewModel<Action,
         .empty()
     }
     
+    // MARK: - Reducer
+    
     /// State reducer method.
     /// You should override this method to configure the state with mutation.
     /// - Parameters:
@@ -247,33 +196,60 @@ open class ViewModel<Action,
     open func reduce(mutation: Mutation, state: State) -> State {
         state
     }
+
+    // MARK: - Transformers
     
-    // MARK: - Overridable transformers
-    
+    /// Transforms action
+    /// You can override to transform actions
+    /// - Note: The transformed observable must not throw an error.
     open func transform(action: Observable<Action>) -> Observable<Action> {
         action
     }
     
+    /// Transforms mutation
+    /// /// /// You can override to transform mutations
+    /// - Note: The transformed observable must not throw an error.
     open func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         mutation
     }
     
+    /// Transforms event
+    /// /// You can override to transform events
+    /// - Note: The transformed observable must not throw an error.
     open func transform(event: Observable<Event>) -> Observable<Event> {
         event
     }
     
     /// Transforms error
-    /// Does not catch error of transformed error observable
-    /// - Parameter error: Input error observable
-    /// - Returns: transfroemd error observable
+    /// /// /// You can override to transform errors
+    /// - Note: The transformed observable must not throw an error.
     open func transform(error: Observable<Error>) -> Observable<Error> {
         error
     }
 }
 
+private extension ViewModel.Reaction {
+    var action: Action? {
+        guard case let .action(action) = self else { return nil }
+        return action
+    }
+    var mutation: Mutation? {
+        guard case let .mutation(mutation) = self else { return nil }
+        return mutation
+    }
+    var event: Event? {
+        guard case let .event(event) = self else { return nil }
+        return event
+    }
+    var error: Error? {
+        guard case let .error(error) = self else { return nil }
+        return error
+    }
+}
+
+// MARK: - Dispatcher
+
 private extension ViewModel {
-    // MARK: - Private methods
-    
     /// Makes dispatch function of Action/Mutation/Event with middlewares
     /// - Parameter middlewares: middlewares
     /// - Parameter dispatchRelay: A relay to dispatch a action/mutation/event passed all middlewares
@@ -292,7 +268,7 @@ private extension ViewModel {
         }(middlewares, dispatchRelay, stateRelay)
     }
         
-    /// Makes post-middleware stack for state.
+    /// Makes postware stack for state.
     /// - Parameter middlewares: state middlewares
     /// - Returns: A state middleware stack function
     static func statePostware(_ postwares: [StatePostware]) -> (State) -> State {
@@ -304,4 +280,50 @@ private extension ViewModel {
         
         return { f($0) }
     }
+}
+
+// MARK: - Middleware/Postware
+
+public extension ViewModel {
+    typealias ActionMiddleware = Middleware<Action>
+    typealias MutationMiddleware = Middleware<Mutation>
+    typealias EventMiddleware = Middleware<Event>
+    typealias ErrorMiddleware = Middleware<Error>
+    
+    typealias GetState = () -> State
+    typealias Dispatch<What> = (What) -> What
+    typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
+    typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
+    
+    typealias StatePostware = StatePostwareTranducer//() -> StatePostwareTranducer
+    typealias StatePostwareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
+    
+    /// Middleware helper type
+    struct MiddlewareGenerator {
+        public func action(_ process: @escaping (_ state: GetState, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
+            nontyped_middleware(process)
+        }
+        public func mutation(_ process: @escaping (_ state: GetState, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
+            nontyped_middleware(process)
+        }
+        public func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
+            nontyped_middleware(process)
+        }
+        public func error(_ process: @escaping (_ state: GetState, _ next: Dispatch<Error>, _ error: Error) -> Error) -> Middleware<Error> {
+            nontyped_middleware(process)
+        }
+    }
+    
+    /// Postware helper type
+    struct PostwareGenerator {
+        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StatePostware {
+            nontyped_state_postware(process)
+        }
+    }
+    
+    /// Middleware generator
+    static var middleware: MiddlewareGenerator { MiddlewareGenerator() }
+    
+    /// Postware generator
+    static var postware: PostwareGenerator { PostwareGenerator() }
 }

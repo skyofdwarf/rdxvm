@@ -16,7 +16,7 @@ struct Dependency {
     var fruits: [Fruit]
 }
 
-final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyState, HappyEvent> {
+final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {
     let dependency: Dependency
     init(dependency: Dependency,
          state initialState: HappyState,
@@ -76,7 +76,7 @@ final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
     }
 }
 
-final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, DrivingHappyState, HappyEvent> {
+final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
     let dependency: Dependency
     init(dependency: Dependency, state initialState: DrivingHappyState) {
         self.dependency = dependency
@@ -126,7 +126,7 @@ final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, Driving
     }
 }
 
-final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyState, HappyEvent> {
+final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {
     init() {
         super.init(state: HappyState())
     }
@@ -141,7 +141,7 @@ final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyState, Ha
     }
 }
 
-final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, DrivingHappyState, HappyEvent> {
+final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
     init() {
         super.init(state: DrivingHappyState())
     }
@@ -169,7 +169,7 @@ final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, DrivingHapp
     }
 }
 
-final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, DrivingHappyState, HappyEvent> {
+final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
     let delegate = DelegateViewModel()
     let actionRelay = PublishRelay<DelegateViewModel.Action>()
     
