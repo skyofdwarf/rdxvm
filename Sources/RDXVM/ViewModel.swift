@@ -170,10 +170,6 @@ open class ViewModel<Action: ViewModelAction,
         
         // 2. middleware(transform(action)) -> processed action
         transform(action: action)
-            .catch {
-                rawErrorRelay.accept($0)
-                return .empty()
-            }
             .subscribe(onNext: {
                 _ = dispatchAction($0)
             })
@@ -195,10 +191,6 @@ open class ViewModel<Action: ViewModelAction,
         
         // Mutation: middleware(transform(reaction.mutation)) -> mutation
         transform(mutation: reactionRelay.compactMap { $0.mutation })
-            .catch {
-                rawErrorRelay.accept($0)
-                return .empty()
-            }
             .subscribe(onNext: {
                 _ = dispatchMutation($0)
             })
@@ -206,10 +198,6 @@ open class ViewModel<Action: ViewModelAction,
         
         // Event: middleware(transform(reaction.event) -> event
         transform(event: reactionRelay.compactMap { $0.event })
-            .catch {
-                rawErrorRelay.accept($0)
-                return .empty()
-            }
             .subscribe(onNext: {
                 _ = dispatchEvent($0)
             })
@@ -217,7 +205,6 @@ open class ViewModel<Action: ViewModelAction,
         
         // Error: middleware(error) -> error
         transform(error: rawErrorRelay.asObservable())
-            .catch { _ in .empty() } ///< ignore errors after transform
             .subscribe(onNext: {
                 _ = dispatchError($0)
             })
