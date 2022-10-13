@@ -203,7 +203,11 @@ open class ViewModel<Action: ViewModelAction,
             })
             .disposed(by: db)
         
-        // Error: middleware(error) -> error
+        // Error: middleware(transform(error)) -> error
+        reactionRelay.compactMap { $0.error }
+            .bind(to: rawErrorRelay)
+            .disposed(by: db)
+        
         transform(error: rawErrorRelay.asObservable())
             .subscribe(onNext: {
                 _ = dispatchError($0)
