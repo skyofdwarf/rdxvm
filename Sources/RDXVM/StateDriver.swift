@@ -57,14 +57,7 @@ public struct StateDriver<State> {
     /// get read-only raw state
     public var raw: State { relay.value }
     
-    /// get @Driving property
-    public subscript<T: SharedSequenceConvertibleType>(dynamicMember keyPath: KeyPath<State, T>) -> T {
-        get {
-            relay.value[keyPath: keyPath]
-        }
-    }
-    
-    /// get normal property
+    /// get state property
     public subscript<T>(dynamicMember keyPath: KeyPath<State, T>) -> T {
         get {
             relay.value[keyPath: keyPath]
