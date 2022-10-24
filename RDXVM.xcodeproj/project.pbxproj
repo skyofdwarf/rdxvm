@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09C0CC41E509083111C87FE4 /* Pods_RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */; };
-		3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */; };
 		4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4232CBC42791BDBD00168DE5 /* RDXVM.framework */; };
 		42E5A3B62795760200BA84AA /* Drived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B02795760200BA84AA /* Drived.swift */; };
 		42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B12795760200BA84AA /* ViewModel.swift */; };
@@ -34,7 +32,6 @@
 
 /* Begin PBXFileReference section */
 		21CD935161C4240BC53FA096 /* Pods-RDXVM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.debug.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.debug.xcconfig"; sourceTree = "<group>"; };
-		336B81F4CFE29479660691F7 /* Pods-Reduxift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.debug.xcconfig"; sourceTree = "<group>"; };
 		4232CBC42791BDBD00168DE5 /* RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RDXVMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		42E5A3B02795760200BA84AA /* Drived.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drived.swift; sourceTree = "<group>"; };
@@ -47,14 +44,9 @@
 		42E5A3C02795760900BA84AA /* RDXVMTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RDXVMTests.swift; sourceTree = "<group>"; };
 		42E5A3C12795760900BA84AA /* TestTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypes.swift; sourceTree = "<group>"; };
 		564B71BB290610020062395F /* Stated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stated.swift; sourceTree = "<group>"; };
-		6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RDXVM_RDXVMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.release.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.release.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.release.xcconfig"; sourceTree = "<group>"; };
 		8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.debug.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.debug.xcconfig"; sourceTree = "<group>"; };
-		AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.release.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.release.xcconfig"; sourceTree = "<group>"; };
-		DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DCC62059418764978D604F71 /* Pods-RDXVM-RDXVMTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.release.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.release.xcconfig"; sourceTree = "<group>"; };
-		E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +54,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09C0CC41E509083111C87FE4 /* Pods_RDXVM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +62,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */,
-				3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,10 +71,6 @@
 		1692652114B6B09C4F5A54A8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				336B81F4CFE29479660691F7 /* Pods-Reduxift.debug.xcconfig */,
-				AE9C7BA579E252E7680D2686 /* Pods-Reduxift.release.xcconfig */,
-				DA98BC74A2EBE2C38BCC6875 /* Pods-Reduxift-ReduxiftTests.debug.xcconfig */,
-				72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */,
 				21CD935161C4240BC53FA096 /* Pods-RDXVM.debug.xcconfig */,
 				73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */,
 				8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */,
@@ -100,7 +86,6 @@
 				42E5A3BB2795760900BA84AA /* RDXVMTests */,
 				4232CBC52791BDBD00168DE5 /* Products */,
 				1692652114B6B09C4F5A54A8 /* Pods */,
-				E9D6B214F65E247B17B1408D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -153,15 +138,6 @@
 				42E5A3C02795760900BA84AA /* RDXVMTests.swift */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		E9D6B214F65E247B17B1408D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */,
-				6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
