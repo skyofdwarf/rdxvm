@@ -33,38 +33,23 @@ pod 'RDXVM'
 
 ## Usage
 
-ViewModel needs some types to create an instance: action, mutation, event, and state.
+ViewModel needs custom types for action, mutation, event, and state to subclass and create an instance.
 
 ```swift
-// Action
 enum Action {
-    case play(Game)
-    case eat(Fruit)
-    
-    struct Game {}
-    struct Fruit {}
+    case add(Int)
+    case subtract(Int)
 }
-
-// Mutation
 enum Mutation {
-    case play(Game)
-    case fruit(Fruit)
-    case level(Int)
-    case exp(Int)
+    case add(Int)
+    case calculating(Bool)
 }
-
-// Event
 enum Event {
-    case alert(String)
-    case levelup(Int)    
+    case notSupported
 }
-
-// State
 struct State {
-    var game: Game?
-    var fruit: Fruit?    
-    var level = 0
-    var exp = 0
+    var sum = 0
+    var calculating = false
 }
 ```
 
@@ -76,46 +61,41 @@ In `react(action:state:`, you should return an observable of Reaction:
 - an action that is mapped from another action.
 
 ```swift
-class LifeViewModel: ViewModel<Action, Mutation, State, Event> {
-    init(state: State = State()/*, some dependencies */) {
+class CalcViewModel: ViewModel<Action, Mutation, State, Event> {
+    init(state: State = State()) {
         super.init(state: state)
     }
-    
+
     override func react(action: Action, state: State) -> Observable<Reaction> {
         switch action {
-        case .play(let game):
-            return .of(.mutation(.play(game)), .mutation(.exp(state.exp + 100)))
-        case .eat(let fruit):
-            let level = state.level + 1
-            return .of(.mutations(.fruit(fruit)), .mutations(.level(level)), .event(.levelup(level)))
+        case .add(let num):
+            return .of(.mutation(.calculating(true)),
+                .mutation(.add(num)),
+                .mutation(.calculating(false)))
+        case .subtract:
+            return .just(.event(.notSupported))
         }
     }
-    
+
     override func reduce(mutation: Mutation, state: State) -> State {
         var state = state
         switch mutation {
-        case let .play(let game):
-            state.game = game
-        case let .fruit(let fruit):
-            state.fruit = fruit
-        case let .level(let level):
-            state.level = level
-        case let .exp(let exp):
-            state.exp = exp
-        }        
+        case let .add(let num):
+            state.sum += num
+        case let .calculating(let calculating):
+            state.calculating = calculating
+        }
         return state
     }
 }
 
-let vm = LifeViewModel<Action, Mutation, Event, State>()
+let vm = CalcViewModel<Action, Mutation, Event, State>()
 ```
 
 Send actions to ViewModel and get outputs(event, error, state) from ViewModel.
 
 ```swift
-
-// input: action
-playButton.rx.tap.map { Action.play(Game) }
+addButton.rx.tap.map { Action.add(3) }
     .bind(to: vm.action)
     .disposed(by: dbag)
 
@@ -127,28 +107,31 @@ vm.error
     .emit()
     .disposed(by: dbag)
 
-// drive state
-vm.state
+vm.$state
     .drive()
     .disposed(by: dbag)
-
-// get current state
-let level: Int = vm.state.level   
 ```
 
-You can also drive specific property of state if you attribute that with @Driving property wrapper. 
+You can get current value of the state or property of the state.
+
+```
+vm.state.sum
+
+vm.state
+```
+
+You can apply the `@Drived` attribute to a property of state, so you can directly drive that property instead of the state itself.
 
 ```swift
-struct OtherState {
-    var game: Game?
-    @Driving var level = 0
+struct State {
+    @Drived var sum = 0
+    @Drived var calculating = false
 }
 
-// drive level only
-vm.state.$level
-    .drive()  
-```
+vm.state.$sum.drive()
+vm.state.$calculating.drive()
 
+```
 ## Author
 
 skyofdwarf, skyofdwarf@gmail.com
