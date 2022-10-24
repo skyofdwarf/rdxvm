@@ -79,7 +79,7 @@ class RDXVMTests: XCTestCase {
         XCTAssert(vm.state.lastMessage == message_hear)
         XCTAssert(vm.state.count == 7)
         
-        XCTAssertEqual(vm.state.raw,
+        XCTAssertEqual(vm.state,
                        HappyState(lastMessage: message_hear,
                                   status: .eating(.apple),
                                   games: dependency.games,
@@ -110,7 +110,7 @@ class RDXVMTests: XCTestCase {
             
             let expectation = XCTestExpectation(description: tag)
             
-            vm.state
+            vm.$state
                 .drive(onNext: {
                     lastState = $0
                     
@@ -229,7 +229,7 @@ class RDXVMTests: XCTestCase {
         XCTAssert(vm.state.lastMessage == message_hear)
         XCTAssertEqual(vm.state.count, 7)
         
-        XCTAssertEqual(vm.state.raw,
+        XCTAssertEqual(vm.state,
                        DrivingHappyState(lastMessage: message_hear,
                                          status: .eating(.apple),
                                          games: dependency.games,
@@ -251,7 +251,7 @@ class RDXVMTests: XCTestCase {
         actionRelay.bind(to: vm.action)
             .disposed(by: db)
         
-        XCTAssertEqual(vm.state.raw,
+        XCTAssertEqual(vm.state,
                        DrivingHappyState(lastMessage: nil,
                                          status: .idle,
                                          games: [],
@@ -442,17 +442,17 @@ class RDXVMTests: XCTestCase {
         actionRelay.accept(.wakeup)
         
         XCTAssertEqual(rawActionHistory.last, .wakeup)
-        XCTAssertEqual(vm.state.raw, state)
+        XCTAssertEqual(vm.state, state)
         
         actionRelay.accept(.play(.lol))
         
         XCTAssertEqual(rawActionHistory.last, .play(.lol))
-        XCTAssertEqual(vm.state.raw, state)
+        XCTAssertEqual(vm.state, state)
         
         actionRelay.accept(.shout("HAH"))
         
         XCTAssertEqual(rawActionHistory.last, .shout("HAH"))
-        XCTAssertEqual(vm.state.raw, state)
+        XCTAssertEqual(vm.state, state)
     }
     
     func test_mutation_logger() throws {

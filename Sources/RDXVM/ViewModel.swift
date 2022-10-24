@@ -10,9 +10,104 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-/// Redux like ViewModel class.
+/// ViewModel baseclass.
+/// Bind actions with action property and bind state, event, and error properties to get data, events, and uncaught or explicit errors.
 ///
-/// Bind actions with `action` property and bind `state`, `event` and `error` properties to get data, evnets and uncatched or explicit errors.
+/// ViewModel needs custom types for action, mutation, event, and state to subclass and create an instance.
+/// ```swift
+/// enum Action {
+///     case add(Int)
+///     case subtract(Int)
+/// }
+/// enum Mutation {
+///     case add(Int)
+///     case calculating(Bool)
+/// }
+/// enum Event {
+///     case notSupported
+/// }
+/// struct State {
+///     var sum = 0
+///     var calculating = false
+/// }
+/// ```
+///
+/// You can subclass ViewModel with these type and must override `react(action:state:)` and `reduce(mutation:state:)` methods.
+///
+/// ```swift
+/// class CalcViewModel: ViewModel<Action, Mutation, State, Event> {
+///     init(state: State = State()) {
+///         super.init(state: state)
+///     }
+///
+///     override func react(action: Action, state: State) -> Observable<Reaction> {
+///         switch action {
+///         case .add(let num):
+///             return .of(.mutation(.calculating(true)),
+///                 .mutation(.add(num)),
+///                 .mutation(.calculating(false)))
+///         case .subtract:
+///             return .just(.event(.notSupported))
+///         }
+///     }
+///
+///     override func reduce(mutation: Mutation, state: State) -> State {
+///         var state = state
+///         switch mutation {
+///         case let .add(let num):
+///             state.sum += num
+///         case let .calculating(let calculating):
+///             state.calculating = calculating
+///         }
+///         return state
+///     }
+/// }
+///
+/// let vm = CalcViewModel<Action, Mutation, Event, State>()
+/// ```
+///
+/// Send actions to ViewModel and get outputs(event, error, state) from ViewModel.
+///
+/// ```swift
+/// addButton.rx.tap.map { Action.add(3) }
+///     .bind(to: vm.action)
+///     .disposed(by: dbag)
+///
+/// vm.event
+///     .emit()
+///     .disposed(by: dbag)
+///
+/// vm.error
+///     .emit()
+///     .disposed(by: dbag)
+///
+/// vm.state
+///     .drive()
+///     .disposed(by: dbag)
+/// ```
+///
+/// You can get current value of the state or property of the state.
+///
+/// ```
+/// // current value of state's property
+/// vm.state.sum
+///
+/// // current state itself
+/// vm.$state
+/// ```
+///
+/// You can apply the `@Drived` attribute to a property of state, so you can directly drive that property instead of the state itself.
+///
+/// ```swift
+/// struct State {
+///     @Drived var sum = 0
+///     @Drived var calculating = false
+/// }
+///
+/// vm.state.$sum.drive()
+/// vm.state.$calculating.drive()
+///
+/// ```
 open class ViewModel<Action,
                      Mutation,
                      Event,
@@ -23,7 +118,7 @@ open class ViewModel<Action,
     public typealias Action = Action
     public typealias Mutation = Mutation
     public typealias Event = Event
-    public typealias State = State    
+    public typealias State = State
     
     /// Reaction is a response or side-effect of an action
     ///
@@ -57,8 +152,8 @@ open class ViewModel<Action,
     /// Event output signal
     public var event: Signal<Event> { eventRelay.asSignal() }
     
-    /// State drivable output
-    public var state: StateDriver<State> { StateDriver(stateRelay) }
+    /// State output drivable
+    @Stated public var state: State
     
     // MARK: - Private properties
     
@@ -67,7 +162,6 @@ open class ViewModel<Action,
     fileprivate let userActionRelay = PublishRelay<Action>()
     fileprivate let eventRelay = PublishRelay<Event>()
     fileprivate let errorRelay = PublishRelay<Error>()
-    fileprivate let stateRelay: BehaviorRelay<State>
     
     deinit {
 #if DEBUG
@@ -93,17 +187,17 @@ open class ViewModel<Action,
                 statePostwares: [StatePostware] = [])
     {
         // state
-        stateRelay = BehaviorRelay<State>(value: initialState)
+        state = initialState
         
         let rawErrorRelay = PublishRelay<Error>()
         let actionRelay = PublishRelay<Action>()
         let reactionRelay = PublishRelay<Reaction>()
         let mutationRelay = PublishRelay<Mutation>()
         
-        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, stateRelay)
-        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, stateRelay)
-        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, stateRelay)
-        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, stateRelay)
+        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, $state.relay)
+        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, $state.relay)
+        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, $state.relay)
+        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, $state.relay)
         let statePostware = Self.statePostware(statePostwares)
         
         // ACTION: react(middleware(transform(action))) -> reaction
@@ -124,7 +218,7 @@ open class ViewModel<Action,
         
         // 3. react(processed action) -> reaction
         actionRelay
-            .withLatestFrom(stateRelay) { ($0, $1) }
+            .withLatestFrom($state.relay) { ($0, $1) }
             .flatMap { [weak self] (action, state) -> Observable<Reaction> in
                 guard let self else { return .empty() }
                 return self.react(action: action, state: state)
@@ -168,7 +262,7 @@ open class ViewModel<Action,
                 return self.reduce(mutation: mutation, state: state)
             }
             .map { statePostware($0) }
-            .bind(to: stateRelay)
+            .bind(to: $state.relay)
             .disposed(by: db)
     }
     

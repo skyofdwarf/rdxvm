@@ -10,7 +10,6 @@
 		09C0CC41E509083111C87FE4 /* Pods_RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E79CCC57D01D0FB2003D15F5 /* Pods_RDXVM.framework */; };
 		3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */; };
 		4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4232CBC42791BDBD00168DE5 /* RDXVM.framework */; };
-		42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3AF2795760200BA84AA /* StateDriver.swift */; };
 		42E5A3B62795760200BA84AA /* Drived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B02795760200BA84AA /* Drived.swift */; };
 		42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B12795760200BA84AA /* ViewModel.swift */; };
 		42E5A3B82795760200BA84AA /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B22795760200BA84AA /* Middleware.swift */; };
@@ -20,6 +19,7 @@
 		42E5A3C42795760900BA84AA /* Observable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */; };
 		42E5A3C52795760900BA84AA /* RDXVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C02795760900BA84AA /* RDXVMTests.swift */; };
 		42E5A3C62795760900BA84AA /* TestTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C12795760900BA84AA /* TestTypes.swift */; };
+		564B71BC290610020062395F /* Stated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564B71BB290610020062395F /* Stated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +37,6 @@
 		336B81F4CFE29479660691F7 /* Pods-Reduxift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift.debug.xcconfig"; path = "Target Support Files/Pods-Reduxift/Pods-Reduxift.debug.xcconfig"; sourceTree = "<group>"; };
 		4232CBC42791BDBD00168DE5 /* RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RDXVMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		42E5A3AF2795760200BA84AA /* StateDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateDriver.swift; sourceTree = "<group>"; };
 		42E5A3B02795760200BA84AA /* Drived.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drived.swift; sourceTree = "<group>"; };
 		42E5A3B12795760200BA84AA /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		42E5A3B22795760200BA84AA /* Middleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middleware.swift; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		42E5A3BF2795760900BA84AA /* Observable+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Extensions.swift"; sourceTree = "<group>"; };
 		42E5A3C02795760900BA84AA /* RDXVMTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RDXVMTests.swift; sourceTree = "<group>"; };
 		42E5A3C12795760900BA84AA /* TestTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypes.swift; sourceTree = "<group>"; };
+		564B71BB290610020062395F /* Stated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stated.swift; sourceTree = "<group>"; };
 		6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RDXVM_RDXVMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72B42E364946CEB13EA564D2 /* Pods-Reduxift-ReduxiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reduxift-ReduxiftTests.release.xcconfig"; path = "Target Support Files/Pods-Reduxift-ReduxiftTests/Pods-Reduxift-ReduxiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.release.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.release.xcconfig"; sourceTree = "<group>"; };
@@ -117,9 +117,9 @@
 			isa = PBXGroup;
 			children = (
 				42E5A3B32795760200BA84AA /* RDXVM.h */,
-				42E5A3AF2795760200BA84AA /* StateDriver.swift */,
 				42E5A3B02795760200BA84AA /* Drived.swift */,
 				42E5A3B12795760200BA84AA /* ViewModel.swift */,
+				564B71BB290610020062395F /* Stated.swift */,
 				42E5A3B22795760200BA84AA /* Middleware.swift */,
 			);
 			name = RDXVM;
@@ -341,7 +341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */,
+				564B71BC290610020062395F /* Stated.swift in Sources */,
 				42E5A3B82795760200BA84AA /* Middleware.swift in Sources */,
 				42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */,
 				42E5A3B62795760200BA84AA /* Drived.swift in Sources */,
