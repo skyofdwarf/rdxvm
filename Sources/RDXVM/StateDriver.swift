@@ -30,8 +30,8 @@ import RxCocoa
 /// 2. To get new values per property, drive @Driving property.
 ///     ```
 ///     struct State {
-///         @Driving var foo = 0
-///         @Driving var bar = 1
+///         @Drived var foo = 0
+///         @Drived var bar = 1
 ///     }
 ///     vm.state.$foo
 ///         .drive(onNext: { foo in
@@ -43,7 +43,7 @@ import RxCocoa
 ///
 ///     ```
 ///     struct State {
-///         @Driving var foo = 0
+///         @Drived var foo = 0
 ///         let bar = 1
 ///     }
 ///     print(vm.state.foo)

@@ -1,5 +1,5 @@
 //
-//  Driving.swift
+//  Drived.swift
 //  RDXVM
 //
 //  Created by YEONGJUNG KIM on 2022/01/14.
@@ -15,7 +15,7 @@ import RxCocoa
 /// You can use wrapped property like normal property.
 /// ```
 /// struct State {
-///     @Driving var foo = 0
+///     @Drived var foo = 0
 ///     var bar = 1
 /// }
 ///
@@ -33,13 +33,13 @@ import RxCocoa
 ///
 /// ```
 /// struct State {
-///     @Driving var foo = 0
+///     @Drived var foo = 0
 ///     var bar = 1
 /// }
 /// vm.state.$foo.drive()
 /// ```
 @propertyWrapper
-public struct Driving<Element> {
+public struct Drived<Element> {
     public var wrappedValue: Element {
         get {
             relay.value
@@ -49,17 +49,10 @@ public struct Driving<Element> {
         }
     }
     
-    public var projectedValue: Self { self }
-    fileprivate let relay: BehaviorRelay<Element>
+    public var projectedValue: Driver<Element> { relay.asDriver() }
+    private let relay: BehaviorRelay<Element>
     
     public init(wrappedValue: Element) {
         self.relay = BehaviorRelay<Element>(value: wrappedValue)
     }
 }
-
-extension Driving: SharedSequenceConvertibleType {
-    public func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
-        relay.asDriver()
-    }
-}
-

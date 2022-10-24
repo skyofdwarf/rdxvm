@@ -59,13 +59,13 @@ struct HappyState: Equatable {
 
 // Reference State
 struct DrivingHappyState: Equatable {
-    @Driving var lastMessage: String?
-    @Driving var status: HappyStatus = .idle
+    @Drived var lastMessage: String?
+    @Drived var status: HappyStatus = .idle
     
-    @Driving var games: [Game] = []
-    @Driving var fruits: [Fruit] = []
+    @Drived var games: [Game] = []
+    @Drived var fruits: [Fruit] = []
     
-    @Driving var count: Int = 0
+    @Drived var count: Int = 0
     
     static func == (lhs: DrivingHappyState, rhs: DrivingHappyState) -> Bool {
         lhs.lastMessage == rhs.lastMessage &&

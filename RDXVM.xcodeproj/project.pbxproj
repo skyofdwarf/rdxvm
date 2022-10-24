@@ -11,7 +11,7 @@
 		3278553F8DD40784405258B6 /* Pods_RDXVM_RDXVMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DC42BF0DA48A9AC514DC0E2 /* Pods_RDXVM_RDXVMTests.framework */; };
 		4232CBCD2791BDBE00168DE5 /* RDXVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4232CBC42791BDBD00168DE5 /* RDXVM.framework */; };
 		42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3AF2795760200BA84AA /* StateDriver.swift */; };
-		42E5A3B62795760200BA84AA /* Driving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B02795760200BA84AA /* Driving.swift */; };
+		42E5A3B62795760200BA84AA /* Drived.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B02795760200BA84AA /* Drived.swift */; };
 		42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B12795760200BA84AA /* ViewModel.swift */; };
 		42E5A3B82795760200BA84AA /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3B22795760200BA84AA /* Middleware.swift */; };
 		42E5A3B92795760200BA84AA /* RDXVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 42E5A3B32795760200BA84AA /* RDXVM.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,7 +38,7 @@
 		4232CBC42791BDBD00168DE5 /* RDXVM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RDXVM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4232CBCC2791BDBE00168DE5 /* RDXVMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RDXVMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		42E5A3AF2795760200BA84AA /* StateDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateDriver.swift; sourceTree = "<group>"; };
-		42E5A3B02795760200BA84AA /* Driving.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driving.swift; sourceTree = "<group>"; };
+		42E5A3B02795760200BA84AA /* Drived.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drived.swift; sourceTree = "<group>"; };
 		42E5A3B12795760200BA84AA /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		42E5A3B22795760200BA84AA /* Middleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Middleware.swift; sourceTree = "<group>"; };
 		42E5A3B32795760200BA84AA /* RDXVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDXVM.h; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 			children = (
 				42E5A3B32795760200BA84AA /* RDXVM.h */,
 				42E5A3AF2795760200BA84AA /* StateDriver.swift */,
-				42E5A3B02795760200BA84AA /* Driving.swift */,
+				42E5A3B02795760200BA84AA /* Drived.swift */,
 				42E5A3B12795760200BA84AA /* ViewModel.swift */,
 				42E5A3B22795760200BA84AA /* Middleware.swift */,
 			);
@@ -344,7 +344,7 @@
 				42E5A3B52795760200BA84AA /* StateDriver.swift in Sources */,
 				42E5A3B82795760200BA84AA /* Middleware.swift in Sources */,
 				42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */,
-				42E5A3B62795760200BA84AA /* Driving.swift in Sources */,
+				42E5A3B62795760200BA84AA /* Drived.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
