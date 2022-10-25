@@ -107,7 +107,7 @@ vm.error
     .emit()
     .disposed(by: dbag)
 
-vm.$state
+vm.state
     .drive()
     .disposed(by: dbag)
 ```
@@ -115,9 +115,14 @@ vm.$state
 You can get current value of the state or property of the state.
 
 ```
-vm.state.sum
+// current state itself
+vm.$state
 
-vm.state
+// current value of state's property
+vm.$state.sum
+
+// '$' can be omitted to get prperty value of the state.
+vm.state.sum
 ```
 
 You can apply the `@Drived` attribute to a property of state, so you can directly drive that property instead of the state itself.

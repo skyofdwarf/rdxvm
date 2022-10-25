@@ -81,7 +81,7 @@ import RxCocoa
 ///     .emit()
 ///     .disposed(by: dbag)
 ///
-/// vm.$state
+/// vm.state
 ///     .drive()
 ///     .disposed(by: dbag)
 /// ```
@@ -89,11 +89,14 @@ import RxCocoa
 /// You can get current value of the state or property of the state.
 ///
 /// ```
-/// // current value of state's property
-/// vm.state.sum
-///
 /// // current state itself
-/// vm.state
+/// vm.$state
+///
+/// // current value of state's property
+/// vm.$state.sum
+///
+/// // '$' can be omitted to get prperty value of the state.
+/// vm.state.sum
 /// ```
 ///
 /// You can apply the `@Drived` attribute to a property of state, so you can directly drive that property instead of the state itself.
@@ -153,7 +156,7 @@ open class ViewModel<Action,
     public var event: Signal<Event> { eventRelay.asSignal() }
     
     /// State output drivable
-    @Stated private(set) var state: State
+    @Stated public private(set) var state: StateDriver<State>
     
     // MARK: - Private properties
     
@@ -186,18 +189,17 @@ open class ViewModel<Action,
                 errorMiddlewares: [ErrorMiddleware] = [],
                 statePostwares: [StatePostware] = [])
     {
-        // state
-        state = initialState
+        self.state = StateDriver(state: initialState)
         
         let rawErrorRelay = PublishRelay<Error>()
         let actionRelay = PublishRelay<Action>()
         let reactionRelay = PublishRelay<Reaction>()
         let mutationRelay = PublishRelay<Mutation>()
         
-        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, $state.relay)
-        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, $state.relay)
-        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, $state.relay)
-        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, $state.relay)
+        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, state.relay)
+        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, state.relay)
+        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, state.relay)
+        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, state.relay)
         let statePostware = Self.statePostware(statePostwares)
         
         // ACTION: react(middleware(transform(action))) -> reaction
@@ -218,7 +220,7 @@ open class ViewModel<Action,
         
         // 3. react(processed action) -> reaction
         actionRelay
-            .withLatestFrom($state.relay) { ($0, $1) }
+            .withLatestFrom(state.relay) { ($0, $1) }
             .flatMap { [weak self] (action, state) -> Observable<Reaction> in
                 guard let self else { return .empty() }
                 return self.react(action: action, state: state)
@@ -262,7 +264,7 @@ open class ViewModel<Action,
                 return self.reduce(mutation: mutation, state: state)
             }
             .map { statePostware($0) }
-            .bind(to: $state.relay)
+            .bind(to: state.relay)
             .disposed(by: db)
     }
     

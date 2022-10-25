@@ -9,65 +9,30 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-/// Stated is a wrapper to drive new state and get current state.
+/// Stated is a simple property wrapper to get the current state value of the state.
 ///
-/// You can get current state and use it normal way.
 /// ```
 /// struct State {
 ///     let foo = 0
 /// }
 ///
-/// print(vm.state)
-/// print(vm.state.foo)
+/// print(vm.$state)
 /// ```
 ///
-/// You can also drive a state.
+/// To get current property value of the state, `$` can be omitted.
 /// ```
 /// struct State {
 ///     let foo = 0
 /// }
-/// vm.$state
-///     .drive(onNext: { state in
-///         print(state.foo)
-///     })
-/// ```
-///
-/// If state has @Drived property, you can drive it directly.
-/// ```
-/// struct State {
-///     var foo = 0
-///     @Drived var bar = 1
-/// }
-/// vm.state.$bar
-///     .drive(onNext: { bar in
-///         print(bar)
-///     })
+/// vm.$state.foo
+/// vm.state.foo
 /// ```
 @propertyWrapper
 public struct Stated<Element> {
-    public var wrappedValue: Element {
-        get {
-            relay.value
-        }
-        set {
-            relay.accept(newValue)
-        }
-    }
-    
-    public var projectedValue: Self { self }
-    internal let relay: BehaviorRelay<Element>
-    
-    public init(wrappedValue: Element) {
-        self.relay = BehaviorRelay<Element>(value: wrappedValue)
-    }
-    
-    internal func accept(_ element: Element) {
-        relay.accept(element)
-    }
-}
+    public var wrappedValue: StateDriver<Element>
+    public var projectedValue: Element { wrappedValue.relay.value }
 
-extension Stated: SharedSequenceConvertibleType {
-    public func asSharedSequence() -> SharedSequence<DriverSharingStrategy, Element> {
-        relay.asDriver()
+    public init(wrappedValue: StateDriver<Element>) {
+        self.wrappedValue = wrappedValue
     }
 }

@@ -18,6 +18,7 @@
 		42E5A3C52795760900BA84AA /* RDXVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C02795760900BA84AA /* RDXVMTests.swift */; };
 		42E5A3C62795760900BA84AA /* TestTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5A3C12795760900BA84AA /* TestTypes.swift */; };
 		564B71BC290610020062395F /* Stated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564B71BB290610020062395F /* Stated.swift */; };
+		565727D829075B10005E8076 /* StateDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 565727D729075B10005E8076 /* StateDriver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		42E5A3C02795760900BA84AA /* RDXVMTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RDXVMTests.swift; sourceTree = "<group>"; };
 		42E5A3C12795760900BA84AA /* TestTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTypes.swift; sourceTree = "<group>"; };
 		564B71BB290610020062395F /* Stated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stated.swift; sourceTree = "<group>"; };
+		565727D729075B10005E8076 /* StateDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateDriver.swift; sourceTree = "<group>"; };
 		73B6595CEAC1AF75428E4F9C /* Pods-RDXVM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM.release.xcconfig"; path = "Target Support Files/Pods-RDXVM/Pods-RDXVM.release.xcconfig"; sourceTree = "<group>"; };
 		8C16E937EDD1A7549D5DEC78 /* Pods-RDXVM-RDXVMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.debug.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DCC62059418764978D604F71 /* Pods-RDXVM-RDXVMTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RDXVM-RDXVMTests.release.xcconfig"; path = "Target Support Files/Pods-RDXVM-RDXVMTests/Pods-RDXVM-RDXVMTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -103,8 +105,9 @@
 			children = (
 				42E5A3B32795760200BA84AA /* RDXVM.h */,
 				42E5A3B02795760200BA84AA /* Drived.swift */,
-				42E5A3B12795760200BA84AA /* ViewModel.swift */,
 				564B71BB290610020062395F /* Stated.swift */,
+				565727D729075B10005E8076 /* StateDriver.swift */,
+				42E5A3B12795760200BA84AA /* ViewModel.swift */,
 				42E5A3B22795760200BA84AA /* Middleware.swift */,
 			);
 			name = RDXVM;
@@ -320,6 +323,7 @@
 				564B71BC290610020062395F /* Stated.swift in Sources */,
 				42E5A3B82795760200BA84AA /* Middleware.swift in Sources */,
 				42E5A3B72795760200BA84AA /* ViewModel.swift in Sources */,
+				565727D829075B10005E8076 /* StateDriver.swift in Sources */,
 				42E5A3B62795760200BA84AA /* Drived.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
