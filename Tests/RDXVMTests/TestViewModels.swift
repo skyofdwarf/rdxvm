@@ -73,53 +73,6 @@ final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, Ha
     }
 }
 
-final class DrivingStateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
-    let dependency: Dependency
-    init(dependency: Dependency, state initialState: DrivingHappyState) {
-        self.dependency = dependency
-        super.init(state: initialState)
-    }
-    
-    override func react(action: Action, state: State) -> Observable<Reaction> {
-        switch action {
-        case .wakeup:
-            return .of(.mutation(.status(.idle)),
-                       .mutation(.ready(dependency.games, dependency.fruits)))
-            
-        case .play(let game):
-            return .from([ .mutation(.status(.playing(game))),
-                           .event(.win(game)) ])
-            
-        case .eat(let fruit):
-            return .just(.mutation(.status(.eating(fruit))))
-            
-        case .shout(let message):
-            return .just(.mutation(.lastMessage(message)))
-        
-        case .sleep(let seconds):
-            return .just(.action(.wakeup)).delay(.seconds(seconds), scheduler: MainScheduler.asyncInstance)
-                .startWith(.mutation(.status(.sleeping)))
-        }
-    }
-    
-    override func reduce(mutation: Mutation, state: inout State) {
-        switch mutation {
-        case .lastMessage(let text):
-            state.lastMessage = text
-            state.count += 1
-            
-        case let .ready(games, fruits):
-            state.games = games
-            state.fruits = fruits
-            state.count += 1
-            
-        case let .status(status):
-            state.status = status
-            state.count += 1
-        }
-    }
-}
-
 final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {
     init() {
         super.init(state: HappyState())
@@ -131,9 +84,9 @@ final class ErrorViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, Ha
     }
 }
 
-final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
+final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {
     init() {
-        super.init(state: DrivingHappyState())
+        super.init(state: HappyState())
     }
     
     override func react(action: Action, state: State) -> Observable<Reaction> {
@@ -156,12 +109,12 @@ final class DelegateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent,
     }
 }
 
-final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, DrivingHappyState> {
+final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {
     let delegate = DelegateViewModel()
     let actionRelay = PublishRelay<DelegateViewModel.Action>()
     
     init() {
-        super.init(state: DrivingHappyState())
+        super.init(state: HappyState())
         
         actionRelay
             .bind(to: delegate.action)
@@ -191,6 +144,6 @@ final class DelegatingViewModel: ViewModel<HappyAction, HappyMutation, HappyEven
     
     override func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         .merge(mutation,
-               delegate.state.$status.map { Mutation.status($0) }.asObservable())
+               delegate.$state.$status.map { Mutation.status($0) }.asObservable())
     }
 }

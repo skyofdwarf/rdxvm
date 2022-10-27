@@ -45,20 +45,9 @@ enum HappyEvent: Equatable {
     case win(Game)
 }
 
-// Value State
+// State
 
 struct HappyState: Equatable {
-    var lastMessage: String?
-    var status: HappyStatus = .idle
-    
-    var games: [Game] = []
-    var fruits: [Fruit] = []
-    
-    var count: Int = 0
-}
-
-// Reference State
-struct DrivingHappyState: Equatable {
     @Drived var lastMessage: String?
     @Drived var status: HappyStatus = .idle
     
@@ -67,19 +56,11 @@ struct DrivingHappyState: Equatable {
     
     @Drived var count: Int = 0
     
-    static func == (lhs: DrivingHappyState, rhs: DrivingHappyState) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.lastMessage == rhs.lastMessage &&
         lhs.status == rhs.status &&
         lhs.games == rhs.games &&
         lhs.fruits == rhs.fruits &&
         lhs.count == rhs.count
-    }
-}
-
-extension DrivingHappyState: CustomDebugStringConvertible {
-    var debugDescription: String {
-        """
-        STATE(\(count)): \(String(describing: lastMessage)), \(status), \(games), \(fruits)
-        """
     }
 }
