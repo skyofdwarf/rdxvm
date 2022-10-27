@@ -51,15 +51,13 @@ import RxCocoa
 ///         }
 ///     }
 ///
-///     override func reduce(mutation: Mutation, state: State) -> State {
-///         var state = state
+///     override func reduce(mutation: Mutation, state: inout State) {
 ///         switch mutation {
 ///         case let .add(let num):
 ///             state.sum += num
 ///         case let .calculating(let calculating):
 ///             state.calculating = calculating
 ///         }
-///         return state
 ///     }
 /// }
 ///
@@ -261,7 +259,9 @@ open class ViewModel<Action,
         mutationRelay
             .scan(initialState) { [weak self] state, mutation in
                 guard let self else { return state }
-                return self.reduce(mutation: mutation, state: state)
+                var state = state
+                self.reduce(mutation: mutation, state: &state)
+                return state
             }
             .map { statePostware($0) }
             .bind(to: state.relay)
@@ -289,8 +289,7 @@ open class ViewModel<Action,
     ///   - mutation: a mutation
     ///   - state: current state
     /// - Returns: new state
-    open func reduce(mutation: Mutation, state: State) -> State {
-        state
+    open func reduce(mutation: Mutation, state: inout State) {
     }
 
     // MARK: - Transformers
