@@ -77,7 +77,7 @@ class CalcViewModel: ViewModel<Action, Mutation, State, Event> {
         }
     }
 
-    override func reduce(mutation: Mutation, state: State) {
+    override func reduce(mutation: Mutation, state: inout State) {
         switch mutation {
         case let .add(let num):
             state.sum += num
