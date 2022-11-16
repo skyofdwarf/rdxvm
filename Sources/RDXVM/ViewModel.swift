@@ -164,12 +164,6 @@ open class ViewModel<Action,
     fileprivate let eventRelay = PublishRelay<Event>()
     fileprivate let errorRelay = PublishRelay<Error>()
     
-    deinit {
-#if DEBUG
-        print("deinit: \(self)")
-#endif
-    }
-    
     // MARK: - Intializer
     
     /// Initializes a view model with state, middlewares, and postwares
