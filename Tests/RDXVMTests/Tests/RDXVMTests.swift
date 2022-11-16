@@ -216,7 +216,7 @@ class RDXVMTests: XCTestCase {
         var rawActionHistory: [HappyAction] = []
         
         // nontyped logger
-        let rawActionLogger: Middleware<HappyState, HappyAction> = nontyped_middleware { state, next, action in
+        let rawActionLogger: Middleware<HappyAction> = nontyped_middleware { store, next, action in
             rawActionHistory.append(action)
             return next(action)
         }
@@ -227,7 +227,7 @@ class RDXVMTests: XCTestCase {
         let MSG_SHOUT = "RAW SHOUT"
         
         // typed logger
-        let actionTransformer = StateViewModel.middleware.action { state, next, action in
+        let actionTransformer = StateViewModel.middleware.action { store, next, action in
             switch action {
             case .wakeup:
                 return next(.shout(MSG_WAKEUP))
@@ -273,13 +273,13 @@ class RDXVMTests: XCTestCase {
         var rawActionHistory: [HappyAction] = []
         
         // nontyped logger
-        let rawActionLogger: Middleware<HappyState, HappyAction> = nontyped_middleware { state, next, action in
+        let rawActionLogger: Middleware<HappyAction> = nontyped_middleware { store, next, action in
             rawActionHistory.append(action)
             return next(action)
         }
         
         // typed logger
-        let actionIgnoring = StateViewModel.middleware.action { state, next, action in
+        let actionIgnoring = StateViewModel.middleware.action { store, next, action in
             // dose not call next(action)
             return action
         }
@@ -314,7 +314,7 @@ class RDXVMTests: XCTestCase {
         var rawMutationHistory: [HappyMutation] = []
         
         // nontyped logger
-        let rawMutationLogger: Middleware<HappyState, HappyMutation> = nontyped_middleware { state, next, mutation in
+        let rawMutationLogger: Middleware<HappyMutation> = nontyped_middleware { store, next, mutation in
             rawMutationHistory.append(mutation)
             return next(mutation)
         }
@@ -323,7 +323,7 @@ class RDXVMTests: XCTestCase {
         let MSG_SHOUT = "shooooout"
         
         // typed logger
-        let mutationTransformer = StateViewModel.middleware.mutation { state, next, mutation in
+        let mutationTransformer = StateViewModel.middleware.mutation { store, next, mutation in
             switch mutation {
             case .lastMessage:
                 return next(mutation)

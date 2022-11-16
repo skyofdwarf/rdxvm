@@ -194,11 +194,13 @@ open class ViewModel<Action,
         let reactionRelay = PublishRelay<Reaction>()
         let mutationRelay = PublishRelay<Mutation>()
         
-        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, state.relay)
-        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, state.relay)
-        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, state.relay)
-        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, state.relay)
-        let statePostware = Self.statePostware(statePostwares)
+        let store = StoreBox(base: self)
+        
+        let dispatchAction = Self.dispatcher(actionMiddlewares, actionRelay, store)
+        let dispatchMutation = Self.dispatcher(mutationMiddlewares, mutationRelay, store)
+        let dispatchEvent = Self.dispatcher(eventMiddlewares, eventRelay, store)
+        let dispatchError = Self.dispatcher(errorMiddlewares, errorRelay, store)
+        let statePostware = Self.statePostware(statePostwares, store)
         
         // ACTION: react(middleware(transform(action))) -> reaction
         
@@ -352,25 +354,24 @@ private extension ViewModel {
     /// - Returns: A dispatch function
     static func dispatcher<T>(_ middlewares: [Middleware<T>],
                               _ dispatchRelay: PublishRelay<T>,
-                              _ stateRelay: BehaviorRelay<State>) -> Dispatch<T> {
+                              _ store: any Store) -> Dispatch<T> {
         { middlewares, dispatchRelay, stateRelay in
             let rawDispatch: Dispatch<T> = { dispatchRelay.accept($0); return $0 }
-            let getState: GetState = { stateRelay.value }
-            
+
             return middlewares.reversed().reduce(rawDispatch) { dispatch, mw in
-                return mw(getState)(dispatch)
+                return mw(store)(dispatch)
             }
-        }(middlewares, dispatchRelay, stateRelay)
+        }(middlewares, dispatchRelay, store)
     }
         
     /// Makes postware stack for state.
     /// - Parameter middlewares: state middlewares
     /// - Returns: A state middleware stack function
-    static func statePostware(_ postwares: [StatePostware]) -> (State) -> State {
+    static func statePostware(_ postwares: [StatePostware], _ store: any Store) -> (State) -> State {
         let rawState: Dispatch<State> = { $0 }
         
-        let f: Dispatch<State> = postwares.reversed().reduce(rawState) { mwStack, mw in
-            return mw(mwStack)
+        let f: Dispatch<State> = postwares.reversed().reduce(rawState) { dispatch, mw in
+            return mw(store)(dispatch)
         }
         
         return { f($0) }
@@ -379,39 +380,50 @@ private extension ViewModel {
 
 // MARK: - Middleware/Postware
 
+extension ViewModel {
+    public struct StoreBox: Store {
+        let base: ViewModel
+        
+        public func dispatch(_ action: Action) {
+            base.send(action: action)
+        }
+        
+        public var state: State { base.$state }
+    }
+}
+
 public extension ViewModel {
     typealias ActionMiddleware = Middleware<Action>
     typealias MutationMiddleware = Middleware<Mutation>
     typealias EventMiddleware = Middleware<Event>
     typealias ErrorMiddleware = Middleware<Error>
     
-    typealias GetState = () -> State
     typealias Dispatch<What> = (What) -> What
-    typealias Middleware<What> = (@escaping GetState) -> MiddlewareTranducer<What>
+    typealias Middleware<What> = (any Store) -> MiddlewareTranducer<What>
     typealias MiddlewareTranducer<What> = (@escaping Dispatch<What>) -> Dispatch<What>
     
-    typealias StatePostware = StatePostwareTranducer//() -> StatePostwareTranducer
+    typealias StatePostware = (any Store) -> StatePostwareTranducer
     typealias StatePostwareTranducer = (@escaping Dispatch<State>) -> Dispatch<State>
     
     /// Middleware helper type
     struct MiddlewareGenerator {
-        public func action(_ process: @escaping (_ state: GetState, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
+        public func action(_ process: @escaping (_ store: any Store, _ next: Dispatch<Action>, _ action: Action) -> Action) -> Middleware<Action> {
             nontyped_middleware(process)
         }
-        public func mutation(_ process: @escaping (_ state: GetState, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
+        public func mutation(_ process: @escaping (_ store: any Store, _ next: Dispatch<Mutation>, _ mutation: Mutation) -> Mutation) -> Middleware<Mutation> {
             nontyped_middleware(process)
         }
-        public func event(_ process: @escaping (_ state: GetState, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
+        public func event(_ process: @escaping (_ store: any Store, _ next: Dispatch<Event>, _ event: Event) -> Event) -> Middleware<Event> {
             nontyped_middleware(process)
         }
-        public func error(_ process: @escaping (_ state: GetState, _ next: Dispatch<Error>, _ error: Error) -> Error) -> Middleware<Error> {
+        public func error(_ process: @escaping (_ store: any Store, _ next: Dispatch<Error>, _ error: Error) -> Error) -> Middleware<Error> {
             nontyped_middleware(process)
         }
     }
     
     /// Postware helper type
     struct PostwareGenerator {
-        public func state(_ process: @escaping (_ state: State, _ next: Dispatch<State>) -> State) -> StatePostware {
+        public func state(_ process: @escaping (_ store: any Store, _ state: State, _ next: Dispatch<State>) -> State) -> StatePostware {
             nontyped_state_postware(process)
         }
     }
