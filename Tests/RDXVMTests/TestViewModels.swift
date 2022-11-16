@@ -12,8 +12,8 @@ import RxRelay
 @testable import RDXVM
 
 struct Dependency {
-    var games: [Game]
-    var fruits: [Fruit]
+    var games: [Game] = []
+    var fruits: [Fruit] = []
 }
 
 final class StateViewModel: ViewModel<HappyAction, HappyMutation, HappyEvent, HappyState> {

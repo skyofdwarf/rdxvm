@@ -358,6 +358,18 @@ class RDXVMTests: XCTestCase {
         XCTAssertEqual(vm.state.status, .idle)
         XCTAssertEqual(vm.state.lastMessage, MSG_SHOUT)
     }
+        
+    func test_middleware_no_retain_cycle() throws {
+        // given
+        let mw = StateViewModel.middleware.action { $1($2) }
+        
+        // when
+        weak var vm = { StateViewModel(dependency: Dependency(),
+                                       state: HappyState(),
+                                       actionMiddlewares: [mw]) }()
+        // then
+        XCTAssertNil(vm)
+    }
     
     func test_error() throws {
         let db = DisposeBag()

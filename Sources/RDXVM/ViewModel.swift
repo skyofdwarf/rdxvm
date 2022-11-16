@@ -382,7 +382,7 @@ private extension ViewModel {
 
 extension ViewModel {
     public struct StoreBox: Store {
-        let base: ViewModel
+        unowned let base: ViewModel
         
         public func dispatch(_ action: Action) {
             base.send(action: action)
